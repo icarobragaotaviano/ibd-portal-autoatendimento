@@ -43,30 +43,72 @@ export function RequestWizard() {
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-6 lg:grid-cols-[1fr_.42fr]">
+    <form onSubmit={submit} className="grid gap-6 lg:grid-cols-[1fr_.42fr] text-white">
       <div className="card p-6 md:p-8">
         <div className="flex gap-2 mb-8" aria-label={`Etapa ${step + 1} de ${steps.length}`}>
-          {steps.map((label, index) => <div key={label} className={`h-2 flex-1 rounded-full ${index <= step ? "bg-[#20372f]" : "bg-black/10"}`} />)}
+          {steps.map((label, index) => <div key={label} className={`h-2 flex-1 rounded-full ${index <= step ? "bg-[#ffd400]" : "bg-white/10"}`} />)}
         </div>
-        <div className="eyebrow">Etapa {step + 1} · {steps[step]}</div>
+        <div className="eyebrow font-mono">Etapa {step + 1} de {steps.length} · {steps[step]}</div>
 
         {step === 0 && <div className="grid gap-5 mt-6">
           <div className="field"><label htmlFor="service">Qual é o serviço?</label><select id="service" className="input" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })}>{services.filter(s => s.value !== "conversa_inicial").map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-          <div className="field"><label htmlFor="description">O que você precisa e qual é o objetivo?</label><textarea id="description" className="input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Ex.: preciso de 5 peças para divulgar um evento e quero destacar inscrições." required /><small>Não precisa escrever um briefing completo. Esta é a primeira leitura da demanda.</small></div>
-          <div className="field"><label htmlFor="desiredDate">Para quando você gostaria?</label><input id="desiredDate" className="input" type="date" value={form.desiredDate} onChange={(e) => setForm({ ...form, desiredDate: e.target.value })} /><small>Esta data é uma referência, não um prazo confirmado.</small></div>
+          <div className="field"><label htmlFor="description">O que você precisa e qual é o objetivo?</label><textarea id="description" className="input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Ex.: preciso de 5 peças para divulgar um evento e quero destacar inscrições." required /><small className="text-muted">Não precisa escrever um briefing completo. Esta é a primeira leitura da demanda.</small></div>
+          <div className="field"><label htmlFor="desiredDate">Para quando você gostaria?</label><input id="desiredDate" className="input" type="date" value={form.desiredDate} onChange={(e) => setForm({ ...form, desiredDate: e.target.value })} /><small className="text-muted">Esta data é uma referência, não um prazo confirmado.</small></div>
         </div>}
 
         {step === 1 && <div className="grid gap-6 mt-6">
-          <fieldset className="field"><legend className="label">Você já tem os materiais?</legend><div className="flex flex-wrap gap-3"><label className="pill"><input type="radio" name="hasMaterial" checked={form.hasMaterial} onChange={() => setForm({ ...form, hasMaterial: true })} /> Sim</label><label className="pill"><input type="radio" name="hasMaterial" checked={!form.hasMaterial} onChange={() => setForm({ ...form, hasMaterial: false })} /> Ainda não / parcialmente</label></div></fieldset>
-          <div className="field"><label htmlFor="materialNotes">Quais materiais você já tem ou ainda faltam?</label><textarea id="materialNotes" className="input" value={form.materialNotes} onChange={(e) => setForm({ ...form, materialNotes: e.target.value })} placeholder="Logo, fotos, textos, identidade visual, links…" /></div>
-          <fieldset className="field"><legend className="label">Quer que o conteúdo/texto seja criado também?</legend><div className="flex gap-3"><label className="pill"><input type="radio" name="content" checked={form.wantsContent} onChange={() => setForm({ ...form, wantsContent: true })} /> Sim</label><label className="pill"><input type="radio" name="content" checked={!form.wantsContent} onChange={() => setForm({ ...form, wantsContent: false })} /> Não</label></div></fieldset>
-          <fieldset className="field"><legend className="label">Nível de urgência informado</legend><div className="flex gap-3"><label className="pill"><input type="radio" name="urgency" checked={form.urgency === "normal"} onChange={() => setForm({ ...form, urgency: "normal" })} /> Normal</label><label className="pill"><input type="radio" name="urgency" checked={form.urgency === "urgente"} onChange={() => setForm({ ...form, urgency: "urgente" })} /> Urgente</label></div></fieldset>
+          <fieldset className="field">
+            <legend className="label">Você já tem os materiais?</legend>
+            <div className="flex flex-wrap gap-3">
+              <label className={`pill cursor-pointer transition-all ${form.hasMaterial ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="hasMaterial" className="sr-only" checked={form.hasMaterial} onChange={() => setForm({ ...form, hasMaterial: true })} />
+                Sim
+              </label>
+              <label className={`pill cursor-pointer transition-all ${!form.hasMaterial ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="hasMaterial" className="sr-only" checked={!form.hasMaterial} onChange={() => setForm({ ...form, hasMaterial: false })} />
+                Ainda não / parcialmente
+              </label>
+            </div>
+          </fieldset>
+          
+          <div className="field">
+            <label htmlFor="materialNotes">Quais materiais você já tem ou ainda faltam?</label>
+            <textarea id="materialNotes" className="input" value={form.materialNotes} onChange={(e) => setForm({ ...form, materialNotes: e.target.value })} placeholder="Logo, fotos, textos, identidade visual, links…" />
+          </div>
+          
+          <fieldset className="field">
+            <legend className="label">Quer que o conteúdo/texto seja criado também?</legend>
+            <div className="flex gap-3">
+              <label className={`pill cursor-pointer transition-all ${form.wantsContent ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="content" className="sr-only" checked={form.wantsContent} onChange={() => setForm({ ...form, wantsContent: true })} />
+                Sim
+              </label>
+              <label className={`pill cursor-pointer transition-all ${!form.wantsContent ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="content" className="sr-only" checked={!form.wantsContent} onChange={() => setForm({ ...form, wantsContent: false })} />
+                Não
+              </label>
+            </div>
+          </fieldset>
+          
+          <fieldset className="field">
+            <legend className="label">Nível de urgência informado</legend>
+            <div className="flex gap-3">
+              <label className={`pill cursor-pointer transition-all ${form.urgency === "normal" ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="urgency" className="sr-only" checked={form.urgency === "normal"} onChange={() => setForm({ ...form, urgency: "normal" })} />
+                Normal
+              </label>
+              <label className={`pill cursor-pointer transition-all ${form.urgency === "urgente" ? "bg-[#ffd400] text-black border-[#ffd400]" : "bg-[#1c1c1c] text-white border-white/10 hover:border-white/30"}`}>
+                <input type="radio" name="urgency" className="sr-only" checked={form.urgency === "urgente"} onChange={() => setForm({ ...form, urgency: "urgente" })} />
+                Urgente
+              </label>
+            </div>
+          </fieldset>
         </div>}
 
         {step === 2 && <div className="grid gap-5 mt-6">
           <div className="field"><label htmlFor="clientName">Nome</label><input id="clientName" className="input" autoComplete="name" value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })} required /></div>
           <div className="grid sm:grid-cols-2 gap-4"><div className="field"><label htmlFor="clientEmail">E-mail</label><input id="clientEmail" className="input" type="email" autoComplete="email" value={form.clientEmail} onChange={(e) => setForm({ ...form, clientEmail: e.target.value })} required /></div><div className="field"><label htmlFor="clientWhatsapp">WhatsApp</label><input id="clientWhatsapp" className="input" autoComplete="tel" value={form.clientWhatsapp} onChange={(e) => setForm({ ...form, clientWhatsapp: e.target.value })} required /></div></div>
-          <label className="flex gap-3 items-start text-sm leading-6"><input className="mt-1" type="checkbox" checked={form.consent} onChange={(e) => setForm({ ...form, consent: e.target.checked })} /><span>Concordo com o uso destes dados para receber, organizar e acompanhar esta solicitação. <a className="underline" href="/privacidade">Ver privacidade</a>.</span></label>
+          <label className="flex gap-3 items-start text-sm leading-6"><input className="mt-1 accent-[#ffd400]" type="checkbox" checked={form.consent} onChange={(e) => setForm({ ...form, consent: e.target.checked })} /><span>Concordo com o uso destes dados para receber, organizar e acompanhar esta solicitação. <a className="underline hover:text-[#ffd400]" href="/privacidade">Ver privacidade</a>.</span></label>
           {error && <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800" role="alert">{error}</div>}
         </div>}
 

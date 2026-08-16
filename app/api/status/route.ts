@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestRepository } from "@/lib/data";
+import { getRequestRepository } from "@/lib/services/database";
 import { StatusLookupSchema } from "@/lib/validation";
 import { statusLabels, statusMessages } from "@/content/messages";
 import { getServiceLabel } from "@/content/services";

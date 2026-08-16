@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DateTime } from "luxon";
 import { BookingSchema } from "@/lib/validation";
-import { getCalendarProvider } from "@/lib/calendar";
+import { getCalendarProvider } from "@/lib/services/calendar";
 import { getSchedulingConfig } from "@/lib/config";
 import { filterFreeSlots, generateCandidateSlots } from "@/lib/scheduling";
 

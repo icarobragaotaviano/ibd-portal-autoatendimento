@@ -11,4 +11,5 @@
 9. `09-ROADMAP-V2.md` — evoluções futuras.
 10. `10-CONTRATO-API.md` — payloads e respostas das rotas.
 11. `11-MODELO-DADOS.md` — estados e campos persistidos.
-12. `referencia/` — briefing original fornecido pelo usuário.
+12. `12-AVALIACAO-SERVICOS.md` — avaliação e arquitetura do Supabase e e-mail transacional.
+13. `referencia/` — briefing original fornecido pelo usuário.

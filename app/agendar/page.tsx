@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Agendar conversa" };
 
 export default function SchedulePage() {
   return (
-    <section className="section">
+    <section className="section text-white">
       <div className="container-shell">
         <div className="max-w-3xl mb-10">
           <div className="eyebrow">Conversa inicial</div>

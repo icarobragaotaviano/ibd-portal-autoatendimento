@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "Privacidade e Termos" };
 
 export default function PrivacyPage() {
   return (
-    <section className="section">
+    <section className="section text-white">
       <div className="container-shell max-w-3xl">
         <div className="eyebrow">Políticas da Operação</div>
         <h1 className="display text-5xl md:text-7xl mt-4">Privacidade e Termos</h1>

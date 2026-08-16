@@ -88,12 +88,24 @@ export function Scheduler() {
             <small>Segunda a sexta, 09h–18h. O sistema só libera horários com pelo menos 24h de antecedência.</small>
           </div>
           <div>
-            <div className="label font-extrabold text-sm mb-2">Horários disponíveis</div>
+            <div className="label font-extrabold text-sm mb-2 text-white">Horários disponíveis</div>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2" aria-live="polite">
-              {loadingSlots && <span className="muted text-sm col-span-full">Consultando agenda…</span>}
-              {!loadingSlots && date && slots.length === 0 && <span className="muted text-sm col-span-full">Nenhum horário livre para esta data.</span>}
+              {loadingSlots && <span className="text-muted text-sm col-span-full">Consultando agenda…</span>}
+              {!loadingSlots && date && slots.length === 0 && <span className="text-muted text-sm col-span-full">Nenhum horário livre para esta data.</span>}
               {slots.map((slot) => (
-                <button key={slot.start} type="button" onClick={() => setSelected(slot)} className={`min-h-11 rounded-xl border px-3 font-bold ${selected?.start === slot.start ? "bg-[#20372f] border-[#20372f] text-white" : "bg-white border-black/15"}`} aria-pressed={selected?.start === slot.start}>{slot.label}</button>
+                <button
+                  key={slot.start}
+                  type="button"
+                  onClick={() => setSelected(slot)}
+                  className={`min-h-11 rounded-xl border px-3 font-bold transition-colors ${
+                    selected?.start === slot.start
+                      ? "bg-[#ffd400] border-[#ffd400] text-black"
+                      : "bg-[#1c1c1c] border-white/10 text-white hover:border-[#ffd400]"
+                  }`}
+                  aria-pressed={selected?.start === slot.start}
+                >
+                  {slot.label}
+                </button>
               ))}
             </div>
           </div>
@@ -103,12 +115,12 @@ export function Scheduler() {
         </OrientationCard>
       </div>
 
-      <div className="card p-6 md:p-8 grid gap-5">
+      <div className="card p-6 md:p-8 grid gap-5 text-white">
         <div className="eyebrow">2. Seus dados</div>
         {selected ? (
-          <div className="rounded-2xl bg-[#ebe5d9] p-4 text-sm"><strong>{selected.dateLabel}</strong><br />Horário escolhido: {selected.label} · duração de 50 min</div>
+          <div className="rounded-2xl bg-[#1c1c1c] border border-white/10 p-4 text-sm"><strong>{selected.dateLabel}</strong><br />Horário escolhido: {selected.label} · duração de 50 min</div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-black/20 p-4 muted text-sm">Escolha uma data e um horário para continuar.</div>
+          <div className="rounded-2xl border border-dashed border-white/20 p-4 text-muted text-sm">Escolha uma data e um horário para continuar.</div>
         )}
         <div className="field"><label htmlFor="name">Nome</label><input id="name" className="input" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
         <div className="grid sm:grid-cols-2 gap-4">

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestRepository } from "@/lib/data";
+import { getRequestRepository } from "@/lib/services/database";
 import { AdminAuthSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
