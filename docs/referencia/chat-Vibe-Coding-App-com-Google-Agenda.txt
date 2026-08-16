@@ -1,0 +1,697 @@
+### USER
+usando o vercel, vamos pensar aqui comigo em um app de autoatendimento para clientes conectado a minha agenda no gmail. usarei vibe coding no antigravity. uero um branstom completo e abrangente.
+
+### ASSISTANT
+Olá, Ícaro! Excelente iniciativa. Para o contexto da **Humani Clin** e seu fluxo como Designer/Gestor, o foco deve ser **fricção zero** para o cliente e **automação total** para você. 
+
+Como você vai usar *vibe coding* no Antigravity (foco em fluidez, delegando a sintaxe para a IA e focando na lógica/experiência), estruturei este brainstorm em blocos visuais e modulares. Você pode copiar e colar no seu Notion ou Trello.
+
+---
+
+### 🎯 1. Visão do Produto
+**Objetivo:** Um portal de autoatendimento onde o cliente escolhe o serviço, vê horários reais e agenda, sincronizando instantaneamente com seu Google Calendar.
+*   **Tom de Voz:** Acolhedor, profissional, claro (padrão Humani Clin).
+*   **Design:** Minimalista, focado em conversão, mobile-first, com espaços em branco para reduzir carga cognitiva.
+
+---
+
+### 🛠️ 2. Arquitetura Pragmática (Padrão Vercel)
+Para rodar rápido, barato e sem dor de cabeça com infraestrutura:
+
+*   **Frontend:** Next.js (App Router) + Tailwind CSS (design rápido e responsivo).
+*   **Backend/API:** Vercel Serverless Functions (`/api/availability` e `/api/book`).
+*   **Integração:** Google Calendar API (OAuth 2.0).
+*   **Hospedagem:** Vercel (Deploy contínuo via GitHub).
+
+---
+
+### 🗺️ 3. Jornada do Usuário (O Fluxo Ideal)
+1.  **Seleção:** Cliente escolhe o serviço (ex: *Consultoria de Branding*, *Sessão Humani*, *Alinhamento de Projeto*).
+2.  **Disponibilidade:** O app lê seu Google Calendar e mostra apenas janelas livres (ocultando eventos pessoais).
+3.  **Captura Mínima:** Nome, E-mail, WhatsApp e uma breve descrição da necessidade.
+4.  **Confirmação:** Evento criado no seu Calendar + E-mail automático para o cliente com link da reunião (Google Meet) e botão para salvar no calendário dele.
+
+---
+
+### 🧱 4. Escopo Ágil (MVP vs. V2)
+
+#### 🟢 MVP (Foco do Vibe Coding agora)
+- [ ] UI Limpa com Tailwind.
+- [ ] Conexão via Google OAuth.
+- [ ] Leitura de horários livres (fuso horário configurado para Brasília).
+- [ ] Criação de evento no Calendar com status "Confirmado".
+- [ ] Regra de bloqueio: Não permitir agendamentos com menos de 24h de antecedência.
+
+#### 🔵 V2 (Futuro)
+- [ ] Pagamento antecipado (Stripe/Mercado Pago) para evitar *no-show*.
+- [ ] Lembretes automáticos via WhatsApp (via API).
+- [ ] Formulário de anamnese/briefing prévio integrado.
+
+---
+
+### 🛡️ 5. Ética, Privacidade e Rigor (Humani Clin)
+*   **LGPD na Captura:** Coletar apenas o essencial. Incluir checkbox: *"Concordo com o uso dos meus dados apenas para o agendamento deste atendimento."*
+*   **Limites de Saúde:** Se o agendamento envolver saúde mental/clínica, incluir um aviso ético: *"Este agendamento não substitui atendimento de emergência. Em caso de crise, ligue 188 (CVV) ou procure um hospital."*
+*   **Profissionalismo:** E-mails de confirmação devem ter linguagem institucional, clara e acolhedora.
+
+---
+
+### 🤖 6. O "Cheat Code" para o Antigravity
+Copie o bloco abaixo e cole no seu agente de IA para iniciar o projeto com o contexto perfeito.
+
+```text
+Atue como um Engenheiro Full-Stack Sênior e UI/UX Designer. Vamos criar um app de agendamento estilo "Calendly" usando Next.js, Tailwind CSS e Vercel Serverless Functions.
+
+OBJETIVO:
+Criar uma interface de autoatendimento para clientes da "Humani Clin" (foco em saúde e design). A interface deve ser limpa, acessível, mobile-first e transmitir confiança.
+
+REQUISITOS TÉCNICOS:
+1. Frontend: Uma página com seleção de serviço e um calendário/seletor de datas interativo.
+2. Backend: Duas rotas de API (app/api/availability/route.ts para buscar horários livres e app/api/book/route.ts para criar o evento).
+3. Integração: Usar a biblioteca `googleapis` para conectar ao Google Calendar.
+
+REGRAS DE NEGÓCIO:
+- Horário de funcionamento: Segunda a Sexta, 09:00 às 18:00.
+- Duração padrão da reunião: 50 minutos (deixe 10 minutos de respiro entre reuniões).
+- Bloquear agendamentos no passado ou com menos de 24h de antecedência.
+
+Primeiro passo: Crie a estrutura inicial do projeto, a interface principal (Frontend) com Tailwind e o arquivo de tipos/interfaces (TypeScript) para o agendamento. Não escreva o código de autenticação complexo ainda, apenas simule a resposta da API para eu testar a UI.
+```
+
+---
+
+### ⚙️ Estrutura de Dados (Para você visualizar o objeto)
+Se precisar ajustar como a IA salva os dados, este é o formato ideal para o seu banco ou estado local:
+
+```json
+{
+  "booking_id": "humani_2023_10",
+  "service_type": "consultoria_design",
+  "client": {
+    "name": "Nome do Cliente",
+    "email": "cliente@email.com",
+    "whatsapp": "+5511999999999",
+    "notes": "Preciso de ajuda com identidade visual."
+  },
+  "schedule": {
+    "start_time": "2023-11-01T14:00:00Z",
+    "end_time": "2023-11-01T14:50:00Z",
+    "timezone": "America/Sao_Paulo"
+  },
+  "status": "confirmed"
+}
+```
+
+**Qual o seu próximo passo?** Quer que eu detalhe como fazer a autenticação do Google (OAuth) ou prefere focar em lapidar o design/texto da interface primeiro?
+
+### USER
+considere essas informaões pra que as solicitaões apresentem mensagens de orientaão e para quehaja partes do site com guias para os clientes.
+
+### ASSISTANT
+Perfeito, Ícaro. Com esses três documentos, o app deixa de ser apenas um “escolher horário” e vira um **portal de autoatendimento orientado**: cada solicitação explica o próximo passo, reduz ansiedade e protege o processo do estúdio.
+
+---
+
+## 1. Decisão central do app
+
+Separar dois tipos de solicitação:
+
+| Tipo | Como funciona | Onde entra o Google Calendar |
+|---|---|---|
+| **Conversa inicial / diagnóstico** | Cliente escolhe horário disponível. | Agenda direto no Gmail/Google Calendar. |
+| **Projeto / demanda de design** | Cliente descreve necessidade, prazo desejado e materiais. | Pode criar uma conversa, mas **não promete entrega final** antes de briefing + material. |
+
+> Regra-chave: **prazo de produção só vira compromisso após briefing aprovado e material recebido.**
+
+---
+
+## 2. Arquitetura do site/app
+
+```txt
+/
+├── home/                    → apresentação simples e CTA
+├── agendar/                 → conversa inicial no Google Calendar
+├── solicitar/               → formulário de nova demanda
+├── guia/                    → central de guias para clientes
+│   ├── manual/
+│   ├── prazos/
+│   ├── revisoes/
+│   ├── material/
+│   ├── retorno-e-pausa/
+│   └── faq/
+├── status/                  → acompanhamento da solicitação
+└── confirmacao/             → pós-agendamento ou pós-envio
+```
+
+---
+
+## 3. Fluxo de solicitação com mensagens de orientação
+
+| Etapa | Regra extraída dos documentos | Mensagem na interface |
+|---|---|---|
+| **Primeiro contato** | Entender antes de orçar. | “Me conta o que você precisa. Pode ser direto: tipo de peça, objetivo e prazo desejado.” |
+| **Envio do manual** | Não enviar manual e briefing juntos. | “Antes de começar, leia como funciona o processo. São 2 minutos.” |
+| **Briefing** | Máximo de 3 perguntas por rodada. | “Para eu entender bem o projeto, vou te fazer até 3 perguntas por vez.” |
+| **Material pendente** | Prazo começa quando o material chega. | “Você pode enviar os materiais agora ou depois. O prazo de produção começa quando eles chegarem.” |
+| **Prazo estimado** | Antes do briefing/material, é estimativa. | “A data informada ainda é uma estimativa. Ela será confirmada após briefing aprovado e material recebido.” |
+| **Prazo confirmado** | Compromisso bilateral. | “Briefing aprovado e material em mãos: entrega prevista para [data].” |
+| **Revisão** | 2 rodadas inclusas. | “Este projeto inclui 2 rodadas de revisão dentro do que foi combinado no briefing.” |
+| **Fora de escopo** | Novo pedido é orçado à parte. | “Boa ideia. Como isso está fora do briefing, posso orçar separadamente ou incluir como próximo job.” |
+| **Cliente sem retorno há 3 dias úteis** | Cobrança ativa. | “Te enviei a versão no dia [data]. Precisa de ajuste ou posso seguir?” |
+| **Cliente sem retorno há 6 dias úteis** | Pausa formal. | “Como não tive retorno, o projeto ficou pausado. Quando você responder, retomo e passo a nova data.” |
+
+---
+
+## 4. Telas principais e o que cada uma deve mostrar
+
+### Home
+
+```md
+## Comece um projeto
+
+Escolha uma opção:
+
+1. Agendar conversa inicial
+2. Enviar demanda de design
+3. Ver guia do cliente
+```
+
+---
+
+### Tela: Agendar conversa
+
+**Orientação fixa:**
+
+```md
+Este é um primeiro encontro para entender sua necessidade.
+Depois do briefing completo e do envio dos materiais, eu confirmo o prazo de entrega.
+```
+
+**Regras de agenda:**
+
+- Segunda a sexta, 9h às 18h.
+- Duração: 50 minutos.
+- Intervalo entre reuniões: 10 minutos.
+- Bloquear agendamento com menos de 24h de antecedência.
+- Mostrar apenas horários livres do Google Calendar.
+
+---
+
+### Tela: Nova solicitação
+
+**Campos sugeridos:**
+
+```md
+1. Qual é o serviço?
+   Ex.: logo, post, flyer, landing page, diagnóstico.
+
+2. O que você precisa?
+   Texto curto. Pode ser simples.
+
+3. Para quando você precisa?
+   Campo de data desejada.
+
+4. Você já tem material?
+   Logo, fotos, textos, cores, fontes.
+
+5. Quer que eu escreva o conteúdo?
+   Sim / Não.
+```
+
+**Mensagens de apoio:**
+
+```md
+Quanto mais completa for a solicitação, mais rápido eu consigo começar.
+
+Se você não tiver logo ou material, sem problema.
+Apenas avise para eu prever isso no processo.
+
+A data desejada é uma referência.
+O prazo real será confirmado após briefing aprovado e material recebido.
+```
+
+---
+
+## 5. Blocos de guias para clientes
+
+Abaixo estão versões prontas para colocar em páginas públicas do site.
+
+### Guia rápido: como funciona
+
+```md
+## Como funciona
+
+Todo projeto começa com um briefing.
+Ele serve para eu entender o que você precisa antes de começar a produzir.
+
+O processo acontece em 4 passos:
+
+1. Você me conta o que precisa.
+2. Eu organizo as informações e confirmo o briefing com você.
+3. Você envia os materiais necessários.
+4. Eu confirmo o prazo e começo a produção.
+
+Não precisa chegar com tudo pronto.
+Se faltar alguma informação, a gente organiza junto.
+```
+
+---
+
+### Guia de prazo
+
+```md
+## Prazo e entrega
+
+O prazo de produção começa quando duas coisas acontecem:
+
+1. O briefing está aprovado por você.
+2. Os materiais necessários foram recebidos.
+
+Antes disso, qualquer data é apenas estimativa.
+
+Se faltar material, o projeto não entra em produção.
+Quando o material chegar, eu te passo uma nova data.
+```
+
+---
+
+### Guia de material
+
+```md
+## Materiais que podem ser necessários
+
+Dependendo do projeto, você pode precisar enviar:
+
+- Logo, de preferência em vetor: AI, SVG ou EPS.
+- Se não tiver vetor, pode ser PNG em boa resolução.
+- Fotos na maior resolução disponível.
+- Textos finais que entrarão na peça.
+- Cores e fontes, se você já tiver identidade visual definida.
+
+Se não tiver algum material, me avise.
+Nesse caso, a gente verifica se o item será criado separadamente ou se o projeto começa sem ele.
+```
+
+---
+
+### Guia de revisões
+
+```md
+## Revisões
+
+Todo projeto inclui 2 rodadas de revisão.
+
+Revisão inclui ajustes dentro do que foi combinado no briefing, como:
+
+- Cor
+- Texto
+- Tamanho
+- Posição de elementos
+- Correção de algo diferente do combinado
+
+Mudanças de direção criativa ou itens novos fora do briefing são orçados separadamente.
+```
+
+---
+
+### Guia de retorno e pausa
+
+```md
+## Retorno e pausa
+
+Quando eu te enviar uma versão, preciso do seu retorno.
+
+O funcionamento é este:
+
+- Após 3 dias úteis sem retorno, eu te mando uma mensagem de status.
+- Após 6 dias úteis sem retorno, o projeto entra em pausa.
+
+Quando você responder, o projeto retoma.
+A nova data de entrega será calculada a partir da data de retomada, conforme a agenda disponível.
+
+Isso não é punição.
+É a forma de manter a agenda organizada para todos os projetos.
+```
+
+---
+
+### Guia de escopo
+
+```md
+## Escopo
+
+O escopo é aquilo que combinamos no briefing aprovado.
+
+Se durante o projeto surgir algo novo, eu registro e te mostro o impacto em prazo e valor.
+Você decide se entra no projeto atual ou se vira uma próxima demanda.
+
+Nenhuma alteração é adicionada em silêncio.
+```
+
+---
+
+## 6. Mensagens dinâmicas para o app
+
+Você pode usar este objeto no código ou como referência para o Antigravity.
+
+```ts
+export const orientacoes = {
+  novoContato: {
+    titulo: "Começar solicitação",
+    texto:
+      "Me conta o que você precisa. Pode ser direto: tipo de peça, objetivo e prazo desejado.",
+  },
+
+  manual: {
+    titulo: "Como funciona o processo",
+    texto:
+      "Antes de começar, leia o guia do cliente. Ele explica briefing, prazo, revisões e retorno.",
+  },
+
+  briefing: {
+    titulo: "Briefing",
+    texto:
+      "Para entender o projeto, vou te fazer algumas perguntas. São até 3 perguntas por vez.",
+  },
+
+  materialPendente: {
+    titulo: "Material pendente",
+    texto:
+      "Você pode enviar os materiais agora ou depois. O prazo de produção começa quando eles chegarem.",
+  },
+
+  prazoEstimado: {
+    titulo: "Data estimada",
+    texto:
+      "A data informada ainda é uma estimativa. Ela será confirmada após briefing aprovado e material recebido.",
+  },
+
+  prazoConfirmado: {
+    titulo: "Prazo confirmado",
+    texto:
+      "Briefing aprovado e material em mãos. A entrega está prevista para a data confirmada por escrito.",
+  },
+
+  revisao: {
+    titulo: "Revisão",
+    texto:
+      "Este projeto inclui 2 rodadas de revisão dentro do que foi combinado no briefing.",
+  },
+
+  foraDeEscopo: {
+    titulo: "Pedido fora do escopo",
+    texto:
+      "Boa ideia. Como isso está fora do briefing, posso orçar separadamente ou incluir como próximo job.",
+  },
+
+  statusDia3: {
+    titulo: "Aguardando retorno",
+    texto:
+      "Te enviei a versão no dia combinado. Precisa de algum ajuste ou posso seguir?",
+  },
+
+  pausaDia6: {
+    titulo: "Projeto pausado",
+    texto:
+      "Como não tive retorno, o projeto ficou pausado. Quando você responder, retomo e passo a nova data.",
+  },
+
+  retornoAposPausa: {
+    titulo: "Retorno do projeto",
+    texto:
+      "Bem-vindo de volta. Vou verificar a agenda e te passo a nova data de entrega a partir de hoje.",
+  },
+};
+```
+
+---
+
+## 7. Estados de solicitação
+
+Use estes estados no app para mostrar banners e mensagens.
+
+```ts
+export type StatusSolicitacao =
+  | "novo"
+  | "briefing_em_andamento"
+  | "briefing_aprovado"
+  | "aguardando_material"
+  | "em_producao"
+  | "versao_enviada"
+  | "aguardando_retorno"
+  | "pausado"
+  | "revisao_em_andamento"
+  | "concluido";
+```
+
+### Mensagens por status
+
+```ts
+export const statusMessages: Record<StatusSolicitacao, string> = {
+  novo:
+    "Solicitação recebida. Próximo passo: entender o projeto por meio do briefing.",
+
+  briefing_em_andamento:
+    "Briefing em andamento. Responda às perguntas para eu confirmar o escopo.",
+
+  briefing_aprovado:
+    "Briefing aprovado. Agora preciso receber os materiais para iniciar a produção.",
+
+  aguardando_material:
+    "Aguardando material. O prazo de produção começa quando os arquivos chegarem.",
+
+  em_producao:
+    "Produção em andamento. A data de entrega confirmada será mostrada aqui.",
+
+  versao_enviada:
+    "Versão enviada. Você pode pedir ajustes dentro das 2 rodadas de revisão inclusas.",
+
+  aguardando_retorno:
+    "Aguardando seu retorno. Se passarem 3 dias úteis, eu te mando uma mensagem de status.",
+
+  pausado:
+    "Projeto pausado por falta de retorno. Responda para retomarmos.",
+
+  revisao_em_andamento:
+    "Revisão em andamento. Estou aplicando os ajustes solicitados.",
+
+  concluido:
+    "Projeto concluído. Fico à disposição para próximas demandas.",
+};
+```
+
+---
+
+## 8. Integração com Google Calendar / Gmail
+
+Quando criar o evento, o app deve preencher não só horário, mas também o próximo passo.
+
+```ts
+const eventoGoogleCalendar = {
+  summary: `[IBD] ${servico} — ${nomeCliente}`,
+  description: `
+Próximo passo: ${orientacao.texto}
+
+Guia do cliente: https://seudominio.com.br/guia
+Status: ${status}
+  `.trim(),
+  start: dataInicio,
+  end: dataFim,
+  attendees: [{ email: emailCliente }],
+};
+```
+
+### Descrição recomendada do evento
+
+```md
+Próximo passo: confirmar briefing.
+Guia: /guia/manual
+Status: aguardando material.
+```
+
+---
+
+## 9. Regras de tom para o app
+
+Essas regras vêm do Guia de Comunicação e devem ser aplicadas em todos os textos.
+
+```md
+Tom:
+- Direto
+- Humano
+- Ativo
+- Claro
+- Confiante
+
+Evitar:
+- “Desculpe incomodar”
+- “Assim que possível”
+- “Qualquer hora”
+- Justificativas longas
+- Muitas perguntas na mesma tela
+- Linguagem passiva
+- Excesso de emoji
+```
+
+---
+
+## 10. Prompt para usar no Antigravity
+
+Copie e cole no Antigravity para gerar a base do app.
+
+```text
+Crie um app web de autoatendimento para clientes do estúdio IBD, usando Next.js, Tailwind CSS e Vercel.
+
+Objetivo:
+Permitir que clientes agendem conversa inicial, enviem solicitações de design e leiam guias do processo.
+
+O app deve ter duas jornadas:
+
+1. Agendar conversa inicial:
+- Usa integração com Google Calendar.
+- Mostra apenas horários livres.
+- Horário de atendimento: segunda a sexta, 9h às 18h.
+- Duração: 50 minutos.
+- Intervalo entre reuniões: 10 minutos.
+- Bloquear agendamentos com menos de 24 horas.
+- Não prometer prazo de entrega final nesta etapa.
+
+2. Solicitar projeto:
+- Formulário com serviço, descrição, prazo desejado, materiais, conteúdo e urgência.
+- Mostrar mensagens de orientação em cada etapa.
+- Deixar claro que prazo de produção só começa após briefing aprovado e material recebido.
+- Se faltar material, mostrar aviso: "O prazo de produção começa quando os materiais chegarem."
+
+Crie uma área de guias públicos com as páginas:
+- Manual do cliente
+- Prazos
+- Revisões
+- Material
+- Retorno e pausa
+- Escopo
+- FAQ
+
+Regras de conteúdo:
+- Todo projeto começa com briefing.
+- Briefing aprovado trava o escopo.
+- Material recebido é condição para iniciar produção.
+- Antes de briefing aprovado e material recebido, qualquer data é estimativa.
+- Todo projeto inclui 2 rodadas de revisão.
+- Mudança de direção criativa ou item novo é escopo novo.
+- Cliente sem retorno há 3 dias úteis recebe mensagem de status.
+- Cliente sem retorno há 6 dias úteis tem projeto pausado.
+- Na retomada, o prazo é recalculado conforme agenda disponível.
+
+Tom de voz:
+- Direto, humano, ativo e profissional.
+- Sem linguagem corporativa excessiva.
+- Sem pedir desculpas por ter processo.
+- Sem promessas vagas.
+- No máximo 1 emoji por mensagem, se necessário.
+
+Componentes desejados:
+- Calendário de agendamento.
+- Formulário em etapas.
+- Cards de orientação.
+- Banners de status.
+- Botão para copiar mensagens prontas.
+- Página de confirmação.
+- Área de acompanhamento.
+
+Integração:
+- Preparar rotas serverless para Google Calendar.
+- Criar evento com título, descrição, participante e próximo passo.
+- Se a autenticação ainda não estiver pronta, usar mock.
+
+Entregue:
+1. Estrutura de páginas.
+2. Componentes principais.
+3. Conteúdo das páginas de guia.
+4. Objeto de mensagens de orientação.
+5. Estados da solicitação.
+6. Mock da API de agenda.
+```
+
+---
+
+## 11. Estrutura de conteúdo em MDX
+
+Se quiser criar guias fáceis de editar, use arquivos `.mdx`.
+
+```tsx
+// app/guia/manual/page.mdx
+
+export const metadata = {
+  title: "Manual do Cliente | IBD",
+};
+
+# Manual do Cliente
+
+Todo projeto começa com um briefing.
+Ele serve para eu entender o que você precisa antes de começar a produzir.
+
+## Etapas
+
+1. Você me conta o que precisa.
+2. Eu confirmo o briefing por escrito.
+3. Você envia os materiais necessários.
+4. Eu confirmo o prazo de produção.
+
+## Importante
+
+Antes do briefing aprovado e do material recebido, qualquer data é estimativa.
+```
+
+---
+
+## 12. Checklist de implantação
+
+```md
+[ ] Home com três ações: agendar, solicitar, ver guia.
+[ ] Página de agendamento conectada ao Google Calendar.
+[ ] Formulário de solicitação em etapas.
+[ ] Aviso de que prazo só começa após briefing + material.
+[ ] Página de Manual do Cliente.
+[ ] Página de Prazos.
+[ ] Página de Revisões.
+[ ] Página de Material.
+[ ] Página de Retorno e Pausa.
+[ ] Página de Escopo.
+[ ] Página de FAQ.
+[ ] Status de solicitação com mensagens automáticas.
+[ ] Botões de copiar mensagens prontas.
+[ ] Evento do Google Calendar com próximo passo na descrição.
+[ ] Consentimento LGPD simples no formulário.
+[ ] Revisão de tom: direto, humano e sem excesso de juridiquês.
+```
+
+---
+
+## 13. Versão curta para colar no projeto
+
+```md
+O app deve funcionar como um portal guiado.
+Cada solicitação precisa mostrar o próximo passo e as regras do processo.
+
+Regras principais:
+- Briefing antes da produção.
+- Prazo só após briefing aprovado e material recebido.
+- Antes disso, toda data é estimativa.
+- 2 revisões inclusas.
+- Mudança de escopo é orçada à parte.
+- 3 dias úteis sem retorno: mensagem de status.
+- 6 dias úteis sem retorno: pausa.
+- Retorno após pausa: novo prazo conforme agenda.
+
+Tom:
+Direto, humano, ativo e profissional.
+Sem excesso de justificativa e sem linguagem passiva.
+```
+
+---
+
+Se quiser, o próximo passo pode ser:
+
+1. transformar isso em **wireframe textual das telas**;  
+2. gerar o **prompt final para o Antigravity criar o app**; ou  
+3. montar os **textos finais das páginas de guia** com linguagem já adaptada para IBD e Humani Clin.
