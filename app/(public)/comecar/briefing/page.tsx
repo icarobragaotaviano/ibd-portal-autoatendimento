@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2, HelpCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, HelpCircle, Sparkles, FileText, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
@@ -11,6 +11,9 @@ import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PageHeader } from "@/components/ui/page-header";
+import { IBDCompanion } from "@/components/guide/ibd-companion";
+import { LiveBriefingSheet } from "@/components/forms/live-briefing-sheet";
+import { getContextualGuideMessage } from "@/lib/domain/guide-rules";
 
 function BriefingFlow() {
   const router = useRouter();
@@ -18,7 +21,7 @@ function BriefingFlow() {
   const prospectId = searchParams.get("prospectId");
 
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3;
+  const totalSteps = 4; // 1: Contexto, 2: Escopo, 3: Prazos, 4: Revisão ("Foi isso que eu entendi")
 
   // Answers State
   const [q1, setQ1] = useState("");
@@ -33,10 +36,24 @@ function BriefingFlow() {
   const [q8, setQ8] = useState("");
   const [q9, setQ9] = useState("");
 
+  // Unsure Fields Tracked
+  const [unsureFields, setUnsureFields] = useState<string[]>([]);
+  const [focusedField, setFocusedField] = useState<string | null>("momento_e_objetivo");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleNextStep(e: React.FormEvent) {
+  function toggleUnsure(fieldLabel: string, setter: (val: string) => void) {
+    if (unsureFields.includes(fieldLabel)) {
+      setUnsureFields(unsureFields.filter((f) => f !== fieldLabel));
+      setter("");
+    } else {
+      setUnsureFields([...unsureFields, fieldLabel]);
+      setter("Ainda não definido (quero orientação no processo)");
+    }
+  }
+
+  async function handleProceed(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
@@ -45,35 +62,35 @@ function BriefingFlow() {
       return;
     }
 
-    const isLastStep = currentStep === totalSteps;
-
-    // Collect responses up to current step
-    const responses: Record<string, string> = {};
-    if (currentStep >= 1) {
-      responses.momento_e_objetivo = q1;
-      responses.publico_alvo = q2;
-      responses.referencias_concorrentes = q3;
-    }
-    if (currentStep >= 2) {
-      responses.entregaveis_especificos = q4;
-      responses.diretrizes_anteriores = q5;
-      responses.materiais_disponiveis = q6;
-    }
-    if (currentStep >= 3) {
-      responses.data_critica_evento = q7;
-      responses.responsavel_aprovacao = q8;
-      responses.observacoes_finais = q9;
+    if (currentStep < 4) {
+      setCurrentStep((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
 
+    // STEP 4: Final submission
     setIsLoading(true);
     try {
+      const responses = {
+        momento_e_objetivo: q1,
+        publico_alvo: q2,
+        referencias_concorrentes: q3,
+        entregaveis_especificos: q4,
+        diretrizes_anteriores: q5,
+        materiais_disponiveis: q6,
+        data_critica_evento: q7,
+        responsavel_aprovacao: q8,
+        observacoes_finais: q9,
+        orientacoes_pendentes: unsureFields.join(", "),
+      };
+
       const res = await fetch(`/api/prospects/${prospectId}/briefing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          step: currentStep,
+          step: 3,
           responses,
-          completed: isLastStep,
+          completed: true,
         }),
       });
 
@@ -83,12 +100,7 @@ function BriefingFlow() {
         return;
       }
 
-      if (isLastStep) {
-        router.push(`/comecar/obrigado?prospectId=${prospectId}`);
-      } else {
-        setCurrentStep((prev) => prev + 1);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      router.push(`/comecar/obrigado?prospectId=${prospectId}`);
     } catch {
       setError("Erro ao se comunicar com o servidor.");
     } finally {
@@ -96,174 +108,362 @@ function BriefingFlow() {
     }
   }
 
+  const guideMessage = getContextualGuideMessage({
+    route: "/comecar/briefing",
+    step: currentStep,
+    focusedField,
+    hasMaterials: q6.toLowerCase().includes("pronto") || q6.toLowerCase().includes("sim"),
+  });
+
   return (
     <Section spacing="lg" className="pt-8 sm:pt-16 pb-24">
-      <Container size="md">
-        <div className="flex flex-col gap-8">
-          <PageHeader
-            eyebrow={`Passo 3 de 3 • Briefing Guiado (${currentStep}/${totalSteps})`}
-            title="Briefing do Projeto"
-            description="Para eu entender bem o projeto, vou te fazer algumas perguntas. São até 3 por vez."
-          />
+      <Container size="lg">
+        <div className="grid gap-8 lg:grid-cols-12 items-start">
+          {/* Main Briefing Flow (8 cols) */}
+          <div className="lg:col-span-8 flex flex-col gap-8">
+            <PageHeader
+              eyebrow={`Passo 3 de 3 • Briefing Guiado (Etapa ${currentStep} de ${totalSteps})`}
+              title={
+                currentStep === 4
+                  ? "Confira sua Solicitação"
+                  : "Briefing do Projeto"
+              }
+              description={
+                currentStep === 4
+                  ? "Revise o que entendemos antes de enviar. Você pode editar qualquer ponto ou confirmar."
+                  : "Para eu entender bem o projeto, vou te fazer até 3 perguntas por vez. Sem termos difíceis."
+              }
+            />
 
-          <div className="flex flex-col gap-2">
-            <Progress value={currentStep} max={totalSteps} showLabel />
-            <span className="text-xs font-mono text-[var(--text-muted)] text-right">
-              Etapa {currentStep} de {totalSteps}
-            </span>
-          </div>
+            <div className="flex flex-col gap-2">
+              <Progress value={currentStep} max={totalSteps} showLabel />
+              <div className="flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
+                <span>{currentStep === 4 ? "Revisão e Confirmação" : `Etapa ${currentStep} de ${totalSteps}`}</span>
+                <span>{Math.round((currentStep / totalSteps) * 100)}% concluído</span>
+              </div>
+            </div>
 
-          {error && (
-            <Alert variant="danger" title="Erro">
-              {error}
-            </Alert>
-          )}
+            {error && (
+              <Alert variant="danger" title="Erro">
+                {error}
+              </Alert>
+            )}
 
-          <Card>
-            <form onSubmit={handleNextStep} className="flex flex-col gap-8">
-              {/* STEP 1: Contexto e Posicionamento */}
-              {currentStep === 1 && (
-                <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[var(--border)] pb-4">
-                    <span className="eyebrow">Etapa 1</span>
-                    <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
-                      Contexto e Posicionamento
-                    </h3>
+            <Card>
+              <form onSubmit={handleProceed} className="flex flex-col gap-8">
+                {/* STEP 1: Contexto e Posicionamento */}
+                {currentStep === 1 && (
+                  <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+                    <div className="border-b border-[var(--border)] pb-4">
+                      <span className="eyebrow">Etapa 1 de 3</span>
+                      <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
+                        Contexto e Posicionamento
+                      </h3>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-[var(--text-primary)]">
+                          1. Qual é o momento atual do seu negócio e o objetivo principal deste trabalho?
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => toggleUnsure("Objetivo", setQ1)}
+                          className="text-[11px] font-mono text-[var(--accent)] hover:underline"
+                        >
+                          {unsureFields.includes("Objetivo") ? "✓ Quero definir agora" : "Ainda não sei"}
+                        </button>
+                      </div>
+                      <Textarea
+                        placeholder="Ex: Estamos reposicionando nossa marca para atender clientes corporativos maiores..."
+                        value={q1}
+                        onChange={(e) => setQ1(e.target.value)}
+                        onFocus={() => setFocusedField("momento_e_objetivo")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-[var(--text-primary)]">
+                          2. Quem é o público-alvo prioritário que precisamos impactar?
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => toggleUnsure("Público-Alvo", setQ2)}
+                          className="text-[11px] font-mono text-[var(--accent)] hover:underline"
+                        >
+                          {unsureFields.includes("Público-Alvo") ? "✓ Quero definir agora" : "Ainda não sei"}
+                        </button>
+                      </div>
+                      <Textarea
+                        placeholder="Ex: Diretores de tecnologia, fundadores de startups e tomadores de decisão B2B..."
+                        value={q2}
+                        onChange={(e) => setQ2(e.target.value)}
+                        onFocus={() => setFocusedField("publico_alvo")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-[var(--text-primary)]">
+                          3. Quais marcas, referências visuais ou concorrentes refletem o estilo desejado?
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => toggleUnsure("Referências", setQ3)}
+                          className="text-[11px] font-mono text-[var(--accent)] hover:underline"
+                        >
+                          {unsureFields.includes("Referências") ? "✓ Quero definir agora" : "Quero orientação"}
+                        </button>
+                      </div>
+                      <Textarea
+                        placeholder="Ex: Gostamos do estilo minimalista da Apple e do contraste editorial da Monocle..."
+                        value={q3}
+                        onChange={(e) => setQ3(e.target.value)}
+                        onFocus={() => setFocusedField("referencias_concorrentes")}
+                        required
+                      />
+                    </div>
                   </div>
-
-                  <Textarea
-                    label="1. Qual é o momento atual do seu negócio e o objetivo principal deste trabalho?"
-                    placeholder="Ex: Estamos reposicionando nossa consultoria para atender clientes corporativos maiores..."
-                    value={q1}
-                    onChange={(e) => setQ1(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="2. Quem é o público-alvo prioritário que precisamos impactar?"
-                    placeholder="Ex: Diretores de tecnologia, fundadores de startups e tomadores de decisão B2B..."
-                    value={q2}
-                    onChange={(e) => setQ2(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="3. Quais marcas, referências visuais ou concorrentes refletem a qualidade que você busca?"
-                    placeholder="Ex: Gostamos do estilo minimalista da Apple e do contraste editorial da Monocle..."
-                    value={q3}
-                    onChange={(e) => setQ3(e.target.value)}
-                    required
-                  />
-                </div>
-              )}
-
-              {/* STEP 2: Escopo e Entregáveis */}
-              {currentStep === 2 && (
-                <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[var(--border)] pb-4">
-                    <span className="eyebrow">Etapa 2</span>
-                    <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
-                      Escopo e Materiais
-                    </h3>
-                  </div>
-
-                  <Textarea
-                    label="1. Quais peças ou entregáveis específicos são prioridade?"
-                    placeholder="Ex: Marca principal, manual em PDF, templates para Instagram e apresentação comercial..."
-                    value={q4}
-                    onChange={(e) => setQ4(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="2. Existe alguma restrição visual, cor que não pode ser usada ou diretriz anterior?"
-                    placeholder="Ex: Queremos evitar tons de azul padrão; precisamos manter o nome já registrado..."
-                    value={q5}
-                    onChange={(e) => setQ5(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="3. Você já possui textos, fotos em alta resolução ou outros materiais prontos?"
-                    placeholder="Ex: Temos os textos redigidos, mas precisaremos de fotos de banco de imagens premium..."
-                    value={q6}
-                    onChange={(e) => setQ6(e.target.value)}
-                    required
-                  />
-                </div>
-              )}
-
-              {/* STEP 3: Prazos e Alinhamentos */}
-              {currentStep === 3 && (
-                <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-                  <div className="border-b border-[var(--border)] pb-4">
-                    <span className="eyebrow">Etapa 3</span>
-                    <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
-                      Prazos e Alinhamento Final
-                    </h3>
-                  </div>
-
-                  <Textarea
-                    label="1. Existe alguma data crítica ou evento/lançamento atrelado a este projeto?"
-                    placeholder="Ex: Pretendemos lançar no congresso nacional que acontece em 45 dias..."
-                    value={q7}
-                    onChange={(e) => setQ7(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="2. Quem será o responsável direto pela aprovação e envio de feedbacks?"
-                    placeholder="Ex: Eu e meu sócio centralizaremos as decisões e aprovações..."
-                    value={q8}
-                    onChange={(e) => setQ8(e.target.value)}
-                    required
-                  />
-
-                  <Textarea
-                    label="3. Há alguma observação importante ou dúvida adicional antes da análise da proposta?"
-                    placeholder="Ex: Gostaríamos de entender também a possibilidade de suporte pós-entrega..."
-                    value={q9}
-                    onChange={(e) => setQ9(e.target.value)}
-                  />
-                </div>
-              )}
-
-              <div className="pt-6 border-t border-[var(--border)] flex items-center justify-between">
-                {currentStep > 1 ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="md"
-                    onClick={() => setCurrentStep((prev) => prev - 1)}
-                    leftIcon={<ArrowLeft className="w-4 h-4" />}
-                    disabled={isLoading}
-                  >
-                    Voltar Etapa
-                  </Button>
-                ) : (
-                  <div />
                 )}
 
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="md"
-                  isLoading={isLoading}
-                  rightIcon={
-                    currentStep === totalSteps ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      <ArrowRight className="w-4 h-4" />
-                    )
-                  }
-                >
-                  {currentStep === totalSteps
-                    ? "Concluir e Enviar Briefing"
-                    : "Próxima Etapa"}
-                </Button>
-              </div>
-            </form>
-          </Card>
+                {/* STEP 2: Escopo e Entregáveis */}
+                {currentStep === 2 && (
+                  <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+                    <div className="border-b border-[var(--border)] pb-4">
+                      <span className="eyebrow">Etapa 2 de 3</span>
+                      <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
+                        Escopo e Materiais
+                      </h3>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-[var(--text-primary)]">
+                        1. Quais peças ou entregáveis específicos são prioridade?
+                      </label>
+                      <Textarea
+                        placeholder="Ex: Marca principal, manual em PDF, templates para Instagram e apresentação..."
+                        value={q4}
+                        onChange={(e) => setQ4(e.target.value)}
+                        onFocus={() => setFocusedField("entregaveis_especificos")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-[var(--text-primary)]">
+                        2. Existe alguma restrição visual, cor que não pode ser usada ou diretriz anterior?
+                      </label>
+                      <Textarea
+                        placeholder="Ex: Queremos evitar tons de azul padrão; precisamos manter o nome já registrado..."
+                        value={q5}
+                        onChange={(e) => setQ5(e.target.value)}
+                        onFocus={() => setFocusedField("diretrizes_anteriores")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-[var(--text-primary)]">
+                          3. Você já possui textos, fotos em alta resolução ou outros materiais prontos?
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => toggleUnsure("Materiais", setQ6)}
+                          className="text-[11px] font-mono text-[var(--accent)] hover:underline"
+                        >
+                          {unsureFields.includes("Materiais") ? "✓ Definir agora" : "Vou enviar depois"}
+                        </button>
+                      </div>
+                      <Textarea
+                        placeholder="Ex: Temos os textos redigidos, mas precisaremos de fotos de banco de imagens premium..."
+                        value={q6}
+                        onChange={(e) => setQ6(e.target.value)}
+                        onFocus={() => setFocusedField("materiais_disponiveis")}
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 3: Prazos e Alinhamentos */}
+                {currentStep === 3 && (
+                  <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+                    <div className="border-b border-[var(--border)] pb-4">
+                      <span className="eyebrow">Etapa 3 de 3</span>
+                      <h3 className="font-display text-xl font-bold text-[var(--text-primary)] mt-1">
+                        Prazos e Alinhamento Final
+                      </h3>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-[var(--text-primary)]">
+                        1. Existe alguma data crítica ou evento/lançamento atrelado a este projeto?
+                      </label>
+                      <Textarea
+                        placeholder="Ex: Pretendemos lançar no congresso nacional que acontece em 45 dias..."
+                        value={q7}
+                        onChange={(e) => setQ7(e.target.value)}
+                        onFocus={() => setFocusedField("data_critica_evento")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-[var(--text-primary)]">
+                        2. Quem será o responsável direto pela aprovação e envio de feedbacks?
+                      </label>
+                      <Textarea
+                        placeholder="Ex: Eu e meu sócio centralizaremos as decisões e aprovações..."
+                        value={q8}
+                        onChange={(e) => setQ8(e.target.value)}
+                        onFocus={() => setFocusedField("responsavel_aprovacao")}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-[var(--text-primary)]">
+                        3. Há alguma observação importante ou dúvida adicional?
+                      </label>
+                      <Textarea
+                        placeholder="Ex: Gostaríamos de entender também a possibilidade de suporte pós-entrega..."
+                        value={q9}
+                        onChange={(e) => setQ9(e.target.value)}
+                        onFocus={() => setFocusedField("observacoes_finais")}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 4: "Foi isso que eu entendi" (Review & Confirmation) */}
+                {currentStep === 4 && (
+                  <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+                    <div className="border-b border-[var(--border)] pb-4">
+                      <span className="eyebrow text-emerald-400">Revisão Pré-Envio</span>
+                      <h3 className="font-display text-2xl font-bold text-[var(--text-primary)] mt-1">
+                        Foi isso que eu entendi:
+                      </h3>
+                    </div>
+
+                    <div className="grid gap-4 bg-[var(--surface)] p-5 rounded-[var(--radius-lg)] border border-[var(--border)]">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-mono text-[10px] uppercase text-[var(--text-muted)]">
+                          Objetivo e Momento
+                        </span>
+                        <p className="text-sm font-medium text-[var(--text-primary)] leading-relaxed">
+                          {q1 || "Não informado"}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-1 pt-3 border-t border-[var(--border)]">
+                        <span className="font-mono text-[10px] uppercase text-[var(--text-muted)]">
+                          Público-Alvo
+                        </span>
+                        <p className="text-sm text-[var(--text-secondary)]">{q2 || "A definir"}</p>
+                      </div>
+
+                      <div className="flex flex-col gap-1 pt-3 border-t border-[var(--border)]">
+                        <span className="font-mono text-[10px] uppercase text-[var(--text-muted)]">
+                          Entregáveis Prioritários
+                        </span>
+                        <p className="text-sm text-[var(--text-secondary)]">{q4 || "A definir"}</p>
+                      </div>
+
+                      <div className="flex flex-col gap-1 pt-3 border-t border-[var(--border)]">
+                        <span className="font-mono text-[10px] uppercase text-[var(--text-muted)]">
+                          Situação dos Materiais
+                        </span>
+                        <p className="text-sm text-[var(--text-secondary)]">{q6 || "Envio complementar"}</p>
+                      </div>
+
+                      {unsureFields.length > 0 && (
+                        <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2">
+                          <HelpCircle className="w-4 h-4 shrink-0 text-[var(--accent)]" />
+                          <span>
+                            Pontos marcados para orientação durante o processo: <strong>{unsureFields.join(", ")}</strong>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-4 rounded-[var(--radius-md)] bg-[var(--surface-strong)] border border-[var(--border)] flex items-center gap-3">
+                      <Check className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                      <p className="text-xs text-[var(--text-secondary)]">
+                        Ao clicar em confirmar, analisarei o briefing e estruturarei a proposta de escopo e cronograma.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Buttons Navigation */}
+                <div className="pt-6 border-t border-[var(--border)] flex items-center justify-between">
+                  {currentStep > 1 ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="md"
+                      onClick={() => {
+                        setCurrentStep((prev) => prev - 1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      leftIcon={<ArrowLeft className="w-4 h-4" />}
+                      disabled={isLoading}
+                    >
+                      Voltar Etapa
+                    </Button>
+                  ) : (
+                    <div />
+                  )}
+
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    isLoading={isLoading}
+                    rightIcon={
+                      currentStep === totalSteps ? (
+                        <CheckCircle2 className="w-4 h-4" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4" />
+                      )
+                    }
+                  >
+                    {currentStep === totalSteps
+                      ? "Está Certo, Enviar Solicitação"
+                      : "Próxima Etapa"}
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          </div>
+
+          {/* Sidebar Column (4 cols) with IBD Companion & Live Briefing Sheet */}
+          <div className="lg:col-span-4 flex flex-col gap-6 sticky top-24">
+            <IBDCompanion
+              message={guideMessage}
+              onApplyTemplate={(tpl) => {
+                if (currentStep === 1) setQ1((prev) => (prev ? `${prev}\n${tpl}` : tpl));
+                if (currentStep === 2) setQ4((prev) => (prev ? `${prev}\n${tpl}` : tpl));
+              }}
+            />
+
+            <LiveBriefingSheet
+              data={{
+                serviceName: "Demanda Estruturada",
+                objective: q1,
+                targetAudience: q2,
+                hasMaterials: q6 ? (q6.toLowerCase().includes("pronto") ? "sim" : "pendente") : undefined,
+                materialsNote: q6,
+                unsureFields,
+                currentStep,
+                totalSteps,
+              }}
+            />
+          </div>
         </div>
       </Container>
     </Section>

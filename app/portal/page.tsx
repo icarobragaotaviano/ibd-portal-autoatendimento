@@ -24,6 +24,7 @@ import { Section } from "@/components/ui/section";
 import { PageHeader } from "@/components/ui/page-header";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { PendingBox, PendingItem } from "@/components/portal/pending-box";
 import { Client, Project, ProjectNextAction } from "@/lib/domain/types";
 
 interface PortalData {
@@ -108,13 +109,32 @@ export default function ClientPortalDashboard() {
             </div>
           </div>
 
-          {/* SECTION: O QUE PRECISA DA SUA ATENÇÃO (PRIORITÁRIO) */}
-          {priorityProject && (
+          {/* SECTION: MODO TRANQUILO OU NEXT ACTION */}
+          {waitingClientProjects.length === 0 ? (
+            <div className="p-6 rounded-[var(--radius-lg)] bg-gradient-to-r from-emerald-950/30 to-[var(--surface-elevated)] border border-emerald-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                    Modo Tranquilo Ativo
+                  </span>
+                  <h3 className="font-display text-base font-bold text-[var(--text-primary)]">
+                    Está tudo certo. Não há nada que você precise fazer agora.
+                  </h3>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Estou trabalhando nos seus projetos em andamento. Avisarei assim que uma nova versão estiver pronta para sua revisão.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : priorityProject ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
                 <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
-                  O que precisa da sua atenção
+                  Sua Próxima Ação
                 </h3>
               </div>
 
@@ -128,7 +148,27 @@ export default function ClientPortalDashboard() {
                 badge={<StatusBadge status={priorityProject.status} size="sm" />}
               />
             </div>
-          )}
+          ) : null}
+
+          {/* SECTION: CAIXA DE PENDÊNCIAS (Preciso de você vs Comigo) */}
+          <PendingBox
+            clientItems={waitingClientProjects.map((p) => ({
+              id: p.id,
+              title: p.title,
+              description: p.nextAction.description,
+              actionLabel: p.nextAction.action,
+              actionHref: `/portal/projetos/${p.id}`,
+              isClientAction: true,
+            }))}
+            studioItems={activeProjects
+              .filter((p) => p.nextAction.owner === "ibd")
+              .map((p) => ({
+                id: p.id,
+                title: p.title,
+                description: `${p.nextAction.title} (Previsão: ${p.confirmed_deadline || "Em alinhamento"})`,
+                isClientAction: false,
+              }))}
+          />
 
           {/* SECTION: RESUMO EM CARDS (Projetos Ativos, Aguardando Você, Concluídos) */}
           <div className="grid gap-4 sm:grid-cols-3">

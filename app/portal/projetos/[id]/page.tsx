@@ -26,6 +26,10 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { HumanTimeline } from "@/components/portal/human-timeline";
+import { IBDCompanion } from "@/components/guide/ibd-companion";
+import { StructuredRevisionBuilder } from "@/components/portal/structured-revision-builder";
+import { getContextualGuideMessage } from "@/lib/domain/guide-rules";
 import {
   Project,
   ProjectMaterial,
@@ -201,6 +205,12 @@ export default function ClientProjectDetailPage({
             />
           )}
 
+          {/* SECTION: LINHA DO TEMPO HUMANA */}
+          <HumanTimeline
+            currentStatus={project.status}
+            confirmedDueDate={project.confirmed_deadline}
+          />
+
           {/* SECTION: AS 3 DATAS DO PROJETO */}
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="surface-card p-5 flex flex-col gap-1 border-[var(--border)]">
@@ -328,29 +338,30 @@ export default function ClientProjectDetailPage({
                 <CardContent className="flex flex-col gap-5">
                   {/* Revision Request Form */}
                   {project.status === "versao_enviada" || project.status === "aguardando_retorno" ? (
-                    <form onSubmit={handleSubmitRevision} className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/[0.02] flex flex-col gap-4">
-                      <h4 className="font-display text-sm font-bold text-[var(--text-primary)]">
-                        Enviar Apontamentos de Ajuste (Rodada {project.revisions_count + 1} de {project.revisions_limit})
-                      </h4>
-                      <Textarea
-                        placeholder="Descreva detalhadamente os ajustes desejados dentro do briefing aprovado..."
-                        value={revisionNotes}
-                        onChange={(e) => setRevisionNotes(e.target.value)}
-                        required
-                        helperText="Mudanças estruturais de conceito ou novas peças serão tratadas como novo escopo."
-                      />
-                      <div className="flex justify-end">
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          size="md"
-                          isLoading={isSubmittingRevision}
-                          rightIcon={<Send className="w-3.5 h-3.5" />}
-                        >
-                          Solicitar Rodada de Ajustes
-                        </Button>
-                      </div>
-                    </form>
+                    <StructuredRevisionBuilder
+                      currentRound={project.revisions_count + 1}
+                      maxRounds={project.revisions_limit}
+                      onSubmitRevision={async (formattedNotes) => {
+                        setIsSubmittingRevision(true);
+                        setError(null);
+                        try {
+                          const res = await fetch(`/api/portal/projects/${id}/revisions`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ notes: formattedNotes }),
+                          });
+                          const json = await res.json();
+                          if (!res.ok || !json.success) throw new Error(json.error || "Falha ao solicitar revisão.");
+                          setFeedbackSuccess("Solicitação de revisão estruturada enviada! O IBD iniciará a aplicação dos ajustes.");
+                          await fetchProject();
+                        } catch (err) {
+                          setError(err instanceof Error ? err.message : "Erro ao enviar revisão");
+                        } finally {
+                          setIsSubmittingRevision(false);
+                        }
+                      }}
+                      isLoading={isSubmittingRevision}
+                    />
                   ) : (
                     <p className="text-xs text-[var(--text-muted)]">
                       O envio de revisões é habilitado quando uma nova versão é entregue pelo IBD.
@@ -382,13 +393,22 @@ export default function ClientProjectDetailPage({
               </Card>
             </div>
 
-            {/* Right Column: Timeline & Chronological History */}
+            {/* Right Column: Companion, Timeline & Chronological History */}
             <div className="flex flex-col gap-6">
+              {/* Contextual IBD Guide */}
+              <IBDCompanion
+                message={getContextualGuideMessage({
+                  route: `/portal/projetos/${id}`,
+                  status: project.status,
+                  revisionsUsed: project.revisions_count,
+                })}
+              />
+
               <Card>
                 <CardHeader>
-                  <CardTitle>Linha do Tempo do Projeto</CardTitle>
+                  <CardTitle>Histórico Cronológico</CardTitle>
                   <CardDescription>
-                    Registro cronológico de versões, envios e marcos
+                    Registro transparente de versões, envios e marcos
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

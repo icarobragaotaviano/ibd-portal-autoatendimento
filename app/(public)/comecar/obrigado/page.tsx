@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { CheckCircle2, ArrowRight, Clock, BookOpen, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { NextActionCard } from "@/components/ui/next-action-card";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 
@@ -25,17 +26,28 @@ function ObrigadoContent() {
           <div className="flex flex-col gap-3 max-w-xl">
             <span className="eyebrow">Solicitação & Briefing Recebidos</span>
             <h1 className="font-display text-3xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">
-              Recebi sua solicitação.
+              Solicitação recebida ✓
             </h1>
             <p className="text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              Agora eu vou revisar o briefing e avaliar o melhor caminho para o projeto. O próximo passo é a definição de escopo, prazo e investimento.
+              Recebi todas as informações. Agora eu vou analisar seu briefing e preparar a proposta de escopo e cronograma.
             </p>
             {prospectId && (
-              <div className="inline-flex items-center justify-center gap-2 mt-2 py-1 px-3 rounded-full bg-[var(--surface-strong)] border border-[var(--border)] text-xs font-mono text-[var(--text-muted)]">
-                <span>Protocolo:</span>
-                <strong className="text-[var(--text-primary)]">{prospectId}</strong>
+              <div className="inline-flex items-center justify-center gap-2 mt-2 py-1 px-4 rounded-full bg-[var(--surface-strong)] border border-[var(--border)] text-xs font-mono text-[var(--text-muted)]">
+                <span>Protocolo Oficial:</span>
+                <strong className="text-[var(--accent)]">{prospectId}</strong>
               </div>
             )}
+          </div>
+
+          {/* Next Action Card: Agora é comigo */}
+          <div className="w-full text-left">
+            <NextActionCard
+              owner="ibd"
+              title="Agora é comigo"
+              description="Vou analisar a complexidade técnica e gráfica do seu projeto. Em breve você receberá a proposta formal por e-mail e WhatsApp."
+              actionText="Ver Como Funciona o Processo"
+              actionHref="/como-eu-trabalho"
+            />
           </div>
 
           {/* Next Steps Timeline Card */}
