@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { DateTime } from "luxon";
 import { BookingSchema } from "@/lib/validation";
-import { getCalendarProvider } from "@/lib/services/calendar";
-import { getSchedulingConfig } from "@/lib/config";
-import { filterFreeSlots, generateCandidateSlots } from "@/lib/scheduling";
+import { calendarService } from "@/lib/services/calendar";
+import { db } from "@/lib/services/database";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,40 +10,33 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Revise os campos do agendamento.", details: parsed.error.flatten() },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const input = parsed.data;
-    const config = getSchedulingConfig();
-    const start = DateTime.fromISO(input.start).setZone(config.timezone);
-    if (!start.isValid) {
-      return NextResponse.json({ error: "Horário inválido." }, { status: 400 });
-    }
+    const result = await calendarService.bookMeeting({
+      clientName: input.client_name,
+      clientEmail: input.client_email,
+      start: input.start_time,
+      summary: `[IBD] Reunião de ${input.meeting_type} • ${input.client_name}`,
+      description: input.notes || undefined,
+    });
 
-    const dateISO = start.toISODate()!;
-    const candidates = generateCandidateSlots(dateISO, config);
-    const provider = getCalendarProvider();
-    const busy = await provider.getBusyIntervals(dateISO);
-    const free = filterFreeSlots(candidates, busy, config);
-    const chosen = free.find(
-      (slot) => DateTime.fromISO(slot.start).toMillis() === start.toMillis(),
-    );
+    await db.createActivityLog({
+      actor_type: "client",
+      entity_type: "calendar_event",
+      entity_id: result.id,
+      event: "calendar.booked",
+      metadata: { client_name: input.client_name, start_time: input.start_time },
+    });
 
-    if (!chosen) {
-      return NextResponse.json(
-        { error: "Esse horário não está mais disponível. Escolha outro." },
-        { status: 409 },
-      );
-    }
-
-    const result = await provider.createBooking(input, chosen.end);
-    return NextResponse.json({ ok: true, booking: result, slot: chosen }, { status: 201 });
+    return NextResponse.json({ ok: true, booking: result }, { status: 201 });
   } catch (error) {
     console.error("book_error", error instanceof Error ? error.message : "unknown");
     return NextResponse.json(
       { error: "Não foi possível concluir o agendamento." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

@@ -3,60 +3,130 @@ import { z } from "zod";
 const phone = z
   .string()
   .trim()
-  .min(8, "Informe um WhatsApp válido.")
+  .min(8, "Informe um WhatsApp válido com DDD.")
   .max(30, "WhatsApp muito longo.");
 
-export const BookingSchema = z.object({
-  service: z.string().trim().min(1).max(80),
-  start: z.string().datetime({ offset: true }),
-  name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(254),
+// 1. Lead / Prospect Initial Input
+export const LeadInputSchema = z.object({
+  name: z.string().trim().min(2, "Informe seu nome completo.").max(120),
+  email: z.string().trim().email("Informe um e-mail válido.").max(254).toLowerCase(),
   whatsapp: phone,
-  notes: z.string().trim().min(3).max(1500),
-  consent: z.literal(true),
+  service: z.string().trim().min(1, "Selecione o tipo de serviço.").max(100),
+  need_description: z
+    .string()
+    .trim()
+    .min(10, "Descreva a necessidade com pelo menos 10 caracteres.")
+    .max(4000),
+  desired_deadline: z
+    .union([z.literal(""), z.string().date(), z.null()])
+    .optional()
+    .transform((v) => v || null),
+  consent: z.boolean().refine((val) => val === true, {
+    message: "É necessário autorizar o uso dos dados para prosseguir.",
+  }),
 });
 
-export const ClientRequestSchema = z.object({
+export type LeadInput = z.infer<typeof LeadInputSchema>;
+
+// 2. Progressive Briefing Responses
+export const BriefingResponsesSchema = z.object({
+  step: z.number().int().min(1).max(5).optional(),
+  responses: z.record(z.string(), z.unknown()),
+  completed: z.boolean().optional(),
+});
+
+// 3. Proposals
+export const ProposalInputSchema = z.object({
+  prospect_id: z.string().min(1),
+  title: z.string().trim().min(3).max(200),
+  scope: z.string().trim().min(10).max(10000),
+  price: z.number().positive("O valor deve ser positivo."),
+  currency: z.string().default("BRL"),
+  valid_until: z.string().date().optional().nullable(),
+});
+
+// 4. Contracts
+export const ContractInputSchema = z.object({
+  prospect_id: z.string().min(1),
+  proposal_id: z.string().optional().nullable(),
+  start_date: z.string().date().optional().nullable(),
+  file_path: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+// 5. Client Activation
+export const ActivateClientSchema = z.object({
+  prospect_id: z.string().min(1),
+  company_name: z.string().trim().max(150).optional(),
+  notes: z.string().trim().max(1000).optional(),
+});
+
+// 6. Project Creation (by Admin or Active Client)
+export const ProjectRequestSchema = z.object({
   service: z.string().trim().min(1).max(100),
-  description: z.string().trim().min(10).max(4000),
-  desiredDate: z.union([z.literal(""), z.string().date()]).optional().transform((v) => v || undefined),
-  hasMaterial: z.boolean(),
-  materialNotes: z.string().trim().max(1500).optional(),
-  wantsContent: z.boolean(),
-  urgency: z.enum(["normal", "urgente"]),
-  clientName: z.string().trim().min(2).max(120),
-  clientEmail: z.string().trim().email().max(254),
+  title: z.string().trim().min(3).max(150),
+  scope_description: z.string().trim().min(10).max(4000),
+  desired_deadline: z.string().date().optional().nullable(),
+});
+
+// 7. Booking Input (Calendar)
+export const BookingSchema = z
+  .object({
+    service: z.string().trim().min(1).max(80).optional(),
+    meeting_type: z.string().trim().min(1).max(80).optional().default("conversa_inicial"),
+    start: z.string().datetime({ offset: true }).optional(),
+    start_time: z.string().datetime({ offset: true }).optional(),
+    name: z.string().trim().min(2, "Informe seu nome.").max(120).optional(),
+    client_name: z.string().trim().min(2, "Informe seu nome.").max(120).optional(),
+    email: z.string().trim().email("Informe um e-mail válido.").max(254).optional(),
+    client_email: z.string().trim().email("Informe um e-mail válido.").max(254).optional(),
+    whatsapp: phone.optional(),
+    notes: z.string().trim().max(1500).default(""),
+    consent: z.literal(true),
+  })
+  .transform((data) => ({
+    meeting_type: data.meeting_type || data.service || "conversa_inicial",
+    start_time: data.start_time || data.start || "",
+    client_name: data.client_name || data.name || "",
+    client_email: data.client_email || data.email || "",
+    whatsapp: data.whatsapp || "",
+    notes: data.notes,
+    consent: true as const,
+  }));
+
+// 8. Revision Feedback Input
+export const RevisionFeedbackSchema = z.object({
+  notes: z.string().trim().min(5, "Informe os apontamentos de revisão.").max(5000),
+});
+
+// 9. Legacy Schemas for backward compatibility
+export const ClientRequestSchema = z.object({
+  service: z.string().trim().min(1),
+  description: z.string().trim().min(10),
+  desiredDate: z.string().optional().nullable(),
+  hasMaterial: z.boolean().default(false),
+  materialNotes: z.string().optional().nullable(),
+  wantsContent: z.boolean().default(false),
+  urgency: z.enum(["normal", "urgente"]).default("normal"),
+  clientName: z.string().trim().min(2),
+  clientEmail: z.string().trim().email(),
   clientWhatsapp: phone,
   consent: z.literal(true),
 });
 
 export const StatusLookupSchema = z.object({
-  id: z.string().trim().min(5).max(40).transform((v) => v.toUpperCase()),
-  email: z.string().trim().email().max(254).transform((v) => v.toLowerCase()),
+  id: z.string().trim().min(3),
+  email: z.string().trim().email(),
 });
 
 export const AdminAuthSchema = z.object({
-  password: z.string().min(1, "A senha é obrigatória."),
+  password: z.string().min(1),
 });
 
 export const AdminUpdateRequestSchema = z.object({
-  password: z.string().min(1, "A senha é obrigatória."),
-  id: z.string().trim().min(5).max(40),
-  status: z.enum([
-    "novo",
-    "briefing_em_andamento",
-    "briefing_aprovado",
-    "aguardando_material",
-    "em_producao",
-    "versao_enviada",
-    "aguardando_retorno",
-    "pausado",
-    "revisao_em_andamento",
-    "concluido",
-  ]),
-  confirmedDueDate: z
-    .union([z.literal(""), z.string().date(), z.null()])
-    .optional()
-    .transform((v) => v || null),
-  revisionsUsed: z.number().int().min(0).max(10),
+  password: z.string().min(1),
+  id: z.string().min(1),
+  status: z.string(),
+  confirmedDueDate: z.string().optional().nullable(),
+  revisionsUsed: z.number().int().min(0).optional(),
 });

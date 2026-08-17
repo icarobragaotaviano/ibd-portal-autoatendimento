@@ -2,128 +2,123 @@
 
 :root {
   --background: #050505;
+
   --surface: #111111;
   --surface-elevated: #161616;
   --surface-strong: #1c1c1c;
-  
-  --ink: #ffffff;
-  --muted: #8a8a8a;
-  --line: #1c1c1c;
-  
+
+  --text-primary: #ffffff;
+  --text-secondary: #d4d4d4;
+  --text-muted: #8a8a8a;
+
+  --border: #1c1c1c;
+  --border-hover: #333333;
+
   --accent: #ffd400;
-  --accent-2: #f5b800;
-  
+  --accent-hover: #f5c900;
+  --accent-dark: #f5b800;
+
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-  
-  --radius: 16px;
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top right, rgba(255, 212, 0, 0.04), transparent 32rem),
-    var(--background);
-  color: var(--ink);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at top right, rgba(255, 212, 0, 0.035), transparent 28rem),
+    radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.015), transparent 20rem);
+  color: var(--text-primary);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
-a { color: inherit; text-decoration: none; }
-button, input, textarea, select { font: inherit; }
-button { cursor: pointer; }
-::selection { background: #ffd400; color: #050505; }
 
-.container-shell { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
-.display {
-  font-family: var(--font-display), Georgia, serif;
-  letter-spacing: -0.03em;
-  line-height: 0.98;
+a {
+  color: inherit;
+  text-decoration: none;
 }
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: #050505;
+}
+
+/* Base Utility Classes & Semantic Components */
+.container-shell {
+  width: min(1140px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.display-title {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.mono-tech {
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.05em;
+}
+
 .eyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 0.74rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   color: var(--accent);
 }
-.card {
+
+/* Card Surface with subtle transitions */
+.surface-card {
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
-.card:hover {
+
+.surface-card:hover {
   border-color: var(--border-hover);
   background-color: var(--surface-elevated);
 }
-.btn-primary, .btn-secondary, .btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  border-radius: 999px;
-  padding: 0.8rem 1.15rem;
-  font-family: var(--font-display), sans-serif;
-  font-weight: 800;
-  transition: transform .18s ease, background .18s ease, border-color .18s ease;
-}
-.btn-primary { background: var(--accent); color: #050505; border: 1px solid var(--accent); }
-.btn-secondary { background: var(--surface-strong); color: var(--ink); border: 1px solid var(--line); }
-.btn-ghost { background: transparent; color: var(--ink); border: 1px solid transparent; }
-.btn-primary:hover, .btn-secondary:hover, .btn-ghost:hover { transform: translateY(-1px); }
-.btn-primary:focus-visible, .btn-secondary:focus-visible, .btn-ghost:focus-visible,
-input:focus-visible, textarea:focus-visible, select:focus-visible,
-a:focus-visible {
-  outline: 3px solid var(--accent);
+
+/* Focus styles according to rule: yellow + dark offset */
+:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.field { display: grid; gap: 0.45rem; }
-.field label, .field .label { font-weight: 800; font-size: 0.92rem; }
-.field small { color: var(--muted); line-height: 1.45; }
-.input {
-  width: 100%;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 14px;
-  min-height: 48px;
-  padding: 0.8rem 0.9rem;
-  color: var(--ink);
-  transition: border-color 0.18s ease;
-}
-.input:hover { border-color: var(--border-hover); }
-textarea.input { min-height: 126px; resize: vertical; }
-.section { padding-block: 72px; }
-.muted { color: var(--muted); }
-.pill {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.38rem 0.68rem;
-  background: var(--surface-strong);
-  font-size: .82rem;
-  font-weight: 700;
-  color: var(--ink);
-}
-.prose-guide { font-size: 1.06rem; line-height: 1.75; color: var(--text-secondary); }
-.prose-guide h2 { font-family: var(--font-display), sans-serif; font-size: 1.75rem; color: var(--ink); margin-top: 2.3rem; margin-bottom: .65rem; }
-.prose-guide p { margin: .65rem 0; }
-.prose-guide ul, .prose-guide ol { padding-left: 1.35rem; }
-.prose-guide li { margin: .45rem 0; }
-.callout { border-left: 4px solid var(--accent); background: var(--surface-strong); padding: 1rem 1.1rem; border-radius: 0 14px 14px 0; margin: 1.4rem 0; color: var(--ink); }
-.status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(255,212,0,.15); }
 
-@media (max-width: 720px) {
-  .container-shell { width: min(100% - 22px, 1120px); }
-  .section { padding-block: 48px; }
-  .display { letter-spacing: -0.025em; }
+@media (max-width: 768px) {
+  .container-shell {
+    width: min(100% - 24px, 1140px);
+  }
 }

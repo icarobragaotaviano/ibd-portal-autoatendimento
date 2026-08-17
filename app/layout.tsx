@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -24,11 +22,19 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://icarobraga.com"),
   title: {
-    default: "IBD — Portal do Cliente",
-    template: "%s | IBD",
+    default: "IBD — Ícaro Braga Designer | Estúdio Criativo & Portal do Cliente",
+    template: "%s | IBD — Ícaro Braga Designer",
   },
-  description: "Agendamento, solicitações de design e guias do processo em um só lugar.",
+  description:
+    "Design que trabalha pelo seu negócio. Identidade visual, peças para redes sociais, landing pages e materiais com processos transparentes e acompanhamento direto.",
+  openGraph: {
+    title: "IBD — Ícaro Braga Designer",
+    description: "Design que trabalha pelo seu negócio. Processo claro, prazos transparentes e contato direto com quem cria.",
+    type: "website",
+    locale: "pt_BR",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -37,10 +43,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       lang="pt-BR"
       className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
-      <body>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
+      <body className="bg-[var(--background)] text-[var(--text-primary)] min-h-screen flex flex-col">
+        {children}
       </body>
     </html>
   );

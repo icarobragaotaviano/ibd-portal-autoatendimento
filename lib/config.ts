@@ -34,10 +34,12 @@ export function getSchedulingConfig(): SchedulingConfig {
 }
 
 export const calendarMode = () =>
-  process.env.CALENDAR_MODE === "google" ? "google" : "mock";
+  process.env.CALENDAR_PROVIDER === "google" || process.env.CALENDAR_MODE === "google" ? "google" : "mock";
 
 export const dataMode = () =>
-  process.env.DATA_MODE === "neon" ? "neon" : "mock";
+  process.env.DATABASE_PROVIDER === "supabase" ? "supabase" : "mock";
 
 export const baseUrl = () =>
-  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ||
+  "http://localhost:3000";

@@ -1,83 +1,111 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestRepository } from "@/lib/services/database";
-import { getEmailProvider } from "@/lib/services/email";
-import { getProjectPausedEmailHTML } from "@/lib/services/email/templates";
-import { getBusinessDaysDifference } from "@/lib/business-days";
+import { db } from "@/lib/services/database";
+import { emailProvider } from "@/lib/services/email";
+import { followUpDay3Template, projectPausedTemplate } from "@/lib/services/email/templates";
+import { checkReturnThresholds } from "@/lib/domain/business-days";
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    // 1. Validação de segurança
-    const authHeader = request.headers.get("Authorization");
+    // 1. Validate Cron Secret Header if configured
+    const authHeader = req.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Acesso não autorizado." }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Acesso não autorizado para o Cron Job." },
+        { status: 401 }
+      );
     }
 
-    const repo = getRequestRepository();
-    const emailProvider = getEmailProvider();
-    const allRequests = await repo.listAll();
+    const projects = await db.listAllProjects();
+    const results = {
+      evaluated: 0,
+      day3FollowupsSent: 0,
+      day6Paused: 0,
+    };
 
-    const nowISO = new Date().toISOString();
-    const processed: string[] = [];
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-    // 2. Filtra solicitações aguardando retorno do cliente
-    const pendingRequests = allRequests.filter((req) => req.status === "aguardando_retorno");
+    for (const prj of projects) {
+      if (prj.status === "versao_enviada" || prj.status === "aguardando_retorno") {
+        results.evaluated++;
 
-    for (const req of pendingRequests) {
-      // Calcula a quantidade de dias úteis desde a última alteração (updatedAt)
-      const businessDaysElapsed = getBusinessDaysDifference(req.updatedAt, nowISO);
+        const thresholds = checkReturnThresholds(prj.updated_at);
+        const client = await db.getClient(prj.client_id);
+        const clientEmail = client?.email;
+        const clientName = client?.name || "Cliente";
 
-      if (businessDaysElapsed === 3) {
-        // Dia 3: Enviar lembrete sutil por e-mail
-        const subject = `[Lembrete] Aguardamos seu retorno — Protocolo ${req.id}`;
-        const html = `
-          <h1>Aguardamos seu retorno para continuar.</h1>
-          <p>Olá, <strong>${req.clientName}</strong>,</p>
-          <p>Enviamos uma atualização sobre a demanda <strong>${req.id}</strong> há 3 dias úteis e estamos aguardando seu feedback ou material adicional para prosseguir.</p>
-          <p><strong>Atenção:</strong> De acordo com as nossas políticas, projetos parados sem retorno por mais de 6 dias úteis são pausados automaticamente para manter o cronograma de entregas justo para todos os clientes.</p>
-          <a href="https://ibd-portal.vercel.app/status" style="display: inline-block; background-color: #ffd400; color: #050505; padding: 14px 28px; border-radius: 999px; font-weight: bold; text-decoration: none; margin-top: 20px;" target="_blank">Acessar Portal</a>
-        `;
-        
-        await emailProvider.sendEmail({
-          to: req.clientEmail,
-          subject,
-          html,
-        });
+        // Check Day 6 Pause Rule
+        if (thresholds.isDay6Due) {
+          await db.updateProjectStatus(prj.id, "pausado");
+          await db.createActivityLog({
+            actor_type: "system",
+            entity_type: "project",
+            entity_id: prj.id,
+            event: "project.paused_day6",
+            metadata: {
+              days_elapsed: thresholds.businessDaysPassed,
+              reason: "6 dias úteis sem retorno após envio de versão",
+            },
+          });
 
-        processed.push(`${req.id} (Lembrete enviado)`);
-      } else if (businessDaysElapsed >= 6) {
-        // Dia 6+: Pausa automática do projeto
-        await repo.update(req.id, {
-          status: "pausado",
-        });
+          if (clientEmail) {
+            const html = projectPausedTemplate({
+              clientName,
+              projectTitle: prj.title,
+              projectUrl: `${appUrl}/portal/projetos/${prj.id}`,
+            });
 
-        const subject = `Projeto pausado temporariamente — Protocolo ${req.id}`;
-        const html = getProjectPausedEmailHTML(
-          req.clientName,
-          req.id,
-          "Ausência de retorno/feedback sobre o projeto por mais de 6 dias úteis."
-        );
+            await emailProvider.sendEmail({
+              to: clientEmail,
+              subject: `Projeto pausado: ${prj.title} — IBD`,
+              html,
+            });
+          }
 
-        await emailProvider.sendEmail({
-          to: req.clientEmail,
-          subject,
-          html,
-        });
+          results.day6Paused++;
+        }
+        // Check Day 3 Follow-up Rule
+        else if (thresholds.isDay3Due && prj.status === "versao_enviada") {
+          await db.updateProjectStatus(prj.id, "aguardando_retorno");
+          await db.createActivityLog({
+            actor_type: "system",
+            entity_type: "project",
+            entity_id: prj.id,
+            event: "project.followup_day3",
+            metadata: {
+              days_elapsed: thresholds.businessDaysPassed,
+            },
+          });
 
-        processed.push(`${req.id} (Pausado automaticamente)`);
+          if (clientEmail) {
+            const html = followUpDay3Template({
+              clientName,
+              projectTitle: prj.title,
+              projectUrl: `${appUrl}/portal/projetos/${prj.id}`,
+            });
+
+            await emailProvider.sendEmail({
+              to: clientEmail,
+              subject: `Versão aguardando seu retorno: ${prj.title} — IBD`,
+              html,
+            });
+          }
+
+          results.day3FollowupsSent++;
+        }
       }
     }
 
     return NextResponse.json({
-      ok: true,
-      processedCount: processed.length,
-      actions: processed,
+      success: true,
+      timestamp: new Date().toISOString(),
+      results,
     });
   } catch (error) {
-    console.error("cron_error", error instanceof Error ? error.message : "unknown");
+    console.error("Error executing cron project status check:", error);
     return NextResponse.json(
-      { error: "Erro ao executar rotina de controle de status." },
+      { success: false, error: "Falha na execução do Cron Job." },
       { status: 500 }
     );
   }

@@ -1,11 +1,22 @@
-import { dataMode } from "@/lib/config";
-import { mockRequestRepository } from "@/lib/services/database/mock";
-import { neonRequestRepository } from "@/lib/services/database/neon";
-import { supabaseRequestRepository } from "@/lib/services/database/supabase";
+import { DatabaseService } from "./types";
+import { MockDatabaseService } from "./mock";
+import { SupabaseDatabaseService } from "./supabase";
 
-export function getRequestRepository() {
-  const provider = process.env.DATABASE_PROVIDER;
-  if (provider === "supabase") return supabaseRequestRepository;
-  if (provider === "neon" || dataMode() === "neon") return neonRequestRepository;
-  return mockRequestRepository;
+let instance: DatabaseService | null = null;
+
+export function getDatabaseService(): DatabaseService {
+  if (instance) return instance;
+
+  const provider = process.env.DATABASE_PROVIDER?.toLowerCase();
+
+  if (provider === "supabase") {
+    instance = new SupabaseDatabaseService();
+  } else {
+    instance = new MockDatabaseService();
+  }
+
+  return instance;
 }
+
+export const db = getDatabaseService();
+export * from "./types";

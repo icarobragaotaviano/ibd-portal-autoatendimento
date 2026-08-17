@@ -31,3 +31,4 @@ yarn-error.log*
 # local db/debug
 *.sqlite
 *.sqlite3
+powershell.cmd

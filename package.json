@@ -12,15 +12,19 @@
     "google:auth": "node scripts/google-auth.mjs"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": "20.x"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.1.0",
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.3",
     "googleapis": "174.0.1",
+    "lucide-react": "^1.31.0",
     "luxon": "3.7.2",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "resend": "^6.20.0",
     "zod": "4.4.3"
   },
   "devDependencies": {
@@ -33,7 +37,7 @@
     "eslint-config-next": "16.3.1",
     "postcss": "^8.5.0",
     "tailwindcss": "4.3.3",
-    "typescript": "7.0.2",
+    "typescript": "^5.9.3",
     "vitest": "4.1.10"
   }
 }

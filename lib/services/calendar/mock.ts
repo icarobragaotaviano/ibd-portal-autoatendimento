@@ -1,26 +1,58 @@
 import { DateTime } from "luxon";
-import { createProtocol } from "@/lib/ids";
-import { getSchedulingConfig } from "@/lib/config";
-import type { CalendarProvider } from "@/lib/services/calendar/types";
+import {
+  CalendarService,
+  CalendarSlot,
+  BookMeetingParams,
+  CalendarEventResult,
+  DeadlineEventParams,
+} from "./types";
+import { TIMEZONE } from "@/lib/domain/business-days";
 
-export const mockCalendarProvider: CalendarProvider = {
-  async getBusyIntervals(dateISO) {
-    const config = getSchedulingConfig();
-    const base = DateTime.fromISO(dateISO, { zone: config.timezone });
-    if (!base.isValid || base.weekday > 5) return [];
+export class MockCalendarService implements CalendarService {
+  async getAvailableSlots(dateString: string): Promise<CalendarSlot[]> {
+    const targetDate = DateTime.fromISO(dateString, { zone: TIMEZONE });
+    const now = DateTime.now().setZone(TIMEZONE);
 
-    // Bloqueios previsíveis para deixar a UI demonstrável sem depender de API externa.
-    return [11, 15].map((hour) => ({
-      start: base.set({ hour, minute: 0 }).toISO()!,
-      end: base.set({ hour, minute: 50 }).toISO()!,
-    }));
-  },
+    // If date is before 24h advance, no slots
+    if (targetDate.startOf("day") < now.plus({ hours: 24 }).startOf("day")) {
+      return [];
+    }
 
-  async createBooking(input) {
+    // Slots: 10:00, 14:00, 16:00 (50 min meeting + 10 min buffer)
+    const hours = [10, 14, 16];
+    const slots: CalendarSlot[] = hours.map((hour) => {
+      const start = targetDate.set({ hour, minute: 0, second: 0, millisecond: 0 });
+      const end = start.plus({ minutes: 50 });
+      return {
+        start: start.toISO() || "",
+        end: end.toISO() || "",
+        available: true,
+      };
+    });
+
+    return slots;
+  }
+
+  async bookMeeting(params: BookMeetingParams): Promise<CalendarEventResult> {
+    const startDt = DateTime.fromISO(params.start, { zone: TIMEZONE });
+    const endDt = startDt.plus({ minutes: 50 });
+
     return {
-      id: createProtocol("BOOK"),
-      eventLink: `/confirmacao?tipo=agendamento&mock=1&inicio=${encodeURIComponent(input.start)}`,
-      meetLink: "https://meet.google.com/mock-demo",
+      id: `mock-evt-${Date.now()}`,
+      htmlLink: "https://calendar.google.com/calendar/r",
+      start: startDt.toISO() || "",
+      end: endDt.toISO() || "",
+      summary: params.summary,
     };
-  },
-};
+  }
+
+  async createDeadlineEvent(params: DeadlineEventParams): Promise<CalendarEventResult> {
+    return {
+      id: `mock-deadline-${params.projectId}`,
+      htmlLink: "https://calendar.google.com/calendar/r",
+      start: `${params.deadlineDate}T09:00:00-03:00`,
+      end: `${params.deadlineDate}T18:00:00-03:00`,
+      summary: `[IBD — Prazo] ${params.projectTitle} • ${params.clientName}`,
+    };
+  }
+}

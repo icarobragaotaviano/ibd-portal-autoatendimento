@@ -1,35 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestRepository } from "@/lib/services/database";
-import { ClientRequestSchema } from "@/lib/validation";
+import { db } from "@/lib/services/database";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const parsed = ClientRequestSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Revise os campos da solicitação.", details: parsed.error.flatten() },
-        { status: 400 },
-      );
-    }
+    const prospect = await db.createProspect({
+      name: body.clientName || body.name,
+      email: body.clientEmail || body.email,
+      whatsapp: body.clientWhatsapp || body.whatsapp,
+      service: body.service,
+      need_description: body.description || body.need_description || "",
+      desired_deadline: body.desiredDate || body.desired_deadline || null,
+      consent_at: new Date().toISOString(),
+    });
 
-    const record = await getRequestRepository().create(parsed.data);
     return NextResponse.json(
       {
         ok: true,
         request: {
-          id: record.id,
-          status: record.status,
-          createdAt: record.createdAt,
+          id: prospect.id,
+          status: prospect.stage,
+          createdAt: prospect.created_at,
         },
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (error) {
-    console.error("request_create_error", error instanceof Error ? error.message : "unknown");
+    console.error("request_create_error", error);
     return NextResponse.json(
       { error: "Não foi possível registrar a solicitação." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
