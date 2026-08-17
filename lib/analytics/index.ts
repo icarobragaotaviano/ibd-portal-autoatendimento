@@ -9,6 +9,14 @@ export type PublicAnalyticsEvent =
   | "lead_completed"
   | "briefing_started"
   | "briefing_completed"
+  | "draft_restored"
+  | "draft_cleared"
+  | "guide_opened"
+  | "guide_dismissed"
+  | "dont_know_selected"
+  | "revision_started"
+  | "revision_completed"
+  | "project_approved"
   | "login_clicked";
 
 const SENSITIVE_KEYS = [

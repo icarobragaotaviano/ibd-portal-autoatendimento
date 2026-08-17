@@ -14,6 +14,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { IBDCompanion } from "@/components/guide/ibd-companion";
 import { LiveBriefingSheet } from "@/components/forms/live-briefing-sheet";
 import { getContextualGuideMessage } from "@/lib/domain/guide-rules";
+import { useFormDraft } from "@/lib/hooks/use-form-draft";
+import { trackPublicEvent } from "@/lib/analytics";
 
 function BriefingFlow() {
   const router = useRouter();
@@ -22,6 +24,26 @@ function BriefingFlow() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4; // 1: Contexto, 2: Escopo, 3: Prazos, 4: Revisão ("Foi isso que eu entendi")
+
+  // Auto-Save Draft for Deep Briefing
+  const { hasSavedDraft, draftSavedAt, restoreDraft, clearDraft, saveDraft } = useFormDraft({
+    key: "briefing_flow",
+    contextId: prospectId,
+    version: 1,
+    initialValues: {
+      q1: "",
+      q2: "",
+      q3: "",
+      q4: "",
+      q5: "",
+      q6: "",
+      q7: "",
+      q8: "",
+      q9: "",
+      step: 1,
+      unsureFields: [] as string[],
+    },
+  });
 
   // Answers State
   const [q1, setQ1] = useState("");
@@ -43,14 +65,43 @@ function BriefingFlow() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function toggleUnsure(fieldLabel: string, setter: (val: string) => void) {
+  function handleRestoreBriefing() {
+    const data = restoreDraft();
+    if (data) {
+      if (data.q1) setQ1(data.q1);
+      if (data.q2) setQ2(data.q2);
+      if (data.q3) setQ3(data.q3);
+      if (data.q4) setQ4(data.q4);
+      if (data.q5) setQ5(data.q5);
+      if (data.q6) setQ6(data.q6);
+      if (data.q7) setQ7(data.q7);
+      if (data.q8) setQ8(data.q8);
+      if (data.q9) setQ9(data.q9);
+      if (data.step) setCurrentStep(data.step);
+      if (data.unsureFields) setUnsureFields(data.unsureFields);
+      trackPublicEvent("draft_restored");
+    }
+  }
+
+  function updateQuestion(field: string, value: string, setter: (v: string) => void) {
+    setter(value);
+    saveDraft({ [field]: value, step: currentStep, unsureFields });
+  }
+
+  function toggleUnsure(fieldLabel: string, setter: (val: string) => void, fieldName: string) {
+    let updated: string[];
+    let newVal = "";
     if (unsureFields.includes(fieldLabel)) {
-      setUnsureFields(unsureFields.filter((f) => f !== fieldLabel));
+      updated = unsureFields.filter((f) => f !== fieldLabel);
       setter("");
     } else {
-      setUnsureFields([...unsureFields, fieldLabel]);
-      setter("Ainda não definido (quero orientação no processo)");
+      updated = [...unsureFields, fieldLabel];
+      newVal = "Ainda não definido (quero orientação no processo)";
+      setter(newVal);
+      trackPublicEvent("dont_know_selected");
     }
+    setUnsureFields(updated);
+    saveDraft({ [fieldName]: newVal, unsureFields: updated, step: currentStep });
   }
 
   async function handleProceed(e: React.FormEvent) {
@@ -96,13 +147,15 @@ function BriefingFlow() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setError(data.error || "Falha ao salvar respostas do briefing.");
+        setError(data.error || "Não foi possível salvar suas respostas. Seus dados permanecem seguros neste navegador. Tente novamente.");
         return;
       }
 
+      clearDraft();
+      trackPublicEvent("briefing_completed");
       router.push(`/comecar/obrigado?prospectId=${prospectId}`);
     } catch {
-      setError("Erro ao se comunicar com o servidor.");
+      setError("Erro ao se comunicar com o servidor. Suas respostas continuam salvas. Clique em enviar para tentar novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +188,26 @@ function BriefingFlow() {
               }
             />
 
+            {/* Draft Recovery Banner */}
+            {hasSavedDraft && (
+              <div className="p-4 rounded-[var(--radius-md)] bg-blue-500/10 border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-blue-400">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                  <span>
+                    Encontramos um rascunho salvo deste briefing {draftSavedAt ? `às ${draftSavedAt}` : ""}. Deseja restaurar?
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button type="button" variant="primary" size="sm" onClick={handleRestoreBriefing}>
+                    Restaurar Rascunho
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={clearDraft}>
+                    Descartar
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col gap-2">
               <Progress value={currentStep} max={totalSteps} showLabel />
               <div className="flex items-center justify-between text-xs font-mono text-[var(--text-muted)]">
@@ -144,7 +217,7 @@ function BriefingFlow() {
             </div>
 
             {error && (
-              <Alert variant="danger" title="Erro">
+              <Alert variant="danger" title="Atenção">
                 {error}
               </Alert>
             )}
@@ -168,7 +241,7 @@ function BriefingFlow() {
                         </label>
                         <button
                           type="button"
-                          onClick={() => toggleUnsure("Objetivo", setQ1)}
+                          onClick={() => toggleUnsure("Objetivo", (v) => updateQuestion("q1", v, setQ1), "q1")}
                           className="text-[11px] font-mono text-[var(--accent)] hover:underline"
                         >
                           {unsureFields.includes("Objetivo") ? "✓ Quero definir agora" : "Ainda não sei"}
@@ -177,7 +250,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Estamos reposicionando nossa marca para atender clientes corporativos maiores..."
                         value={q1}
-                        onChange={(e) => setQ1(e.target.value)}
+                        onChange={(e) => updateQuestion("q1", e.target.value, setQ1)}
                         onFocus={() => setFocusedField("momento_e_objetivo")}
                         required
                       />
@@ -190,7 +263,7 @@ function BriefingFlow() {
                         </label>
                         <button
                           type="button"
-                          onClick={() => toggleUnsure("Público-Alvo", setQ2)}
+                          onClick={() => toggleUnsure("Público-Alvo", (v) => updateQuestion("q2", v, setQ2), "q2")}
                           className="text-[11px] font-mono text-[var(--accent)] hover:underline"
                         >
                           {unsureFields.includes("Público-Alvo") ? "✓ Quero definir agora" : "Ainda não sei"}
@@ -199,7 +272,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Diretores de tecnologia, fundadores de startups e tomadores de decisão B2B..."
                         value={q2}
-                        onChange={(e) => setQ2(e.target.value)}
+                        onChange={(e) => updateQuestion("q2", e.target.value, setQ2)}
                         onFocus={() => setFocusedField("publico_alvo")}
                         required
                       />
@@ -212,7 +285,7 @@ function BriefingFlow() {
                         </label>
                         <button
                           type="button"
-                          onClick={() => toggleUnsure("Referências", setQ3)}
+                          onClick={() => toggleUnsure("Referências", (v) => updateQuestion("q3", v, setQ3), "q3")}
                           className="text-[11px] font-mono text-[var(--accent)] hover:underline"
                         >
                           {unsureFields.includes("Referências") ? "✓ Quero definir agora" : "Quero orientação"}
@@ -221,7 +294,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Gostamos do estilo minimalista da Apple e do contraste editorial da Monocle..."
                         value={q3}
-                        onChange={(e) => setQ3(e.target.value)}
+                        onChange={(e) => updateQuestion("q3", e.target.value, setQ3)}
                         onFocus={() => setFocusedField("referencias_concorrentes")}
                         required
                       />
@@ -246,7 +319,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Marca principal, manual em PDF, templates para Instagram e apresentação..."
                         value={q4}
-                        onChange={(e) => setQ4(e.target.value)}
+                        onChange={(e) => updateQuestion("q4", e.target.value, setQ4)}
                         onFocus={() => setFocusedField("entregaveis_especificos")}
                         required
                       />
@@ -259,7 +332,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Queremos evitar tons de azul padrão; precisamos manter o nome já registrado..."
                         value={q5}
-                        onChange={(e) => setQ5(e.target.value)}
+                        onChange={(e) => updateQuestion("q5", e.target.value, setQ5)}
                         onFocus={() => setFocusedField("diretrizes_anteriores")}
                         required
                       />
@@ -272,7 +345,7 @@ function BriefingFlow() {
                         </label>
                         <button
                           type="button"
-                          onClick={() => toggleUnsure("Materiais", setQ6)}
+                          onClick={() => toggleUnsure("Materiais", (v) => updateQuestion("q6", v, setQ6), "q6")}
                           className="text-[11px] font-mono text-[var(--accent)] hover:underline"
                         >
                           {unsureFields.includes("Materiais") ? "✓ Definir agora" : "Vou enviar depois"}
@@ -281,7 +354,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Temos os textos redigidos, mas precisaremos de fotos de banco de imagens premium..."
                         value={q6}
-                        onChange={(e) => setQ6(e.target.value)}
+                        onChange={(e) => updateQuestion("q6", e.target.value, setQ6)}
                         onFocus={() => setFocusedField("materiais_disponiveis")}
                         required
                       />
@@ -306,7 +379,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Pretendemos lançar no congresso nacional que acontece em 45 dias..."
                         value={q7}
-                        onChange={(e) => setQ7(e.target.value)}
+                        onChange={(e) => updateQuestion("q7", e.target.value, setQ7)}
                         onFocus={() => setFocusedField("data_critica_evento")}
                         required
                       />
@@ -319,7 +392,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Eu e meu sócio centralizaremos as decisões e aprovações..."
                         value={q8}
-                        onChange={(e) => setQ8(e.target.value)}
+                        onChange={(e) => updateQuestion("q8", e.target.value, setQ8)}
                         onFocus={() => setFocusedField("responsavel_aprovacao")}
                         required
                       />
@@ -332,7 +405,7 @@ function BriefingFlow() {
                       <Textarea
                         placeholder="Ex: Gostaríamos de entender também a possibilidade de suporte pós-entrega..."
                         value={q9}
-                        onChange={(e) => setQ9(e.target.value)}
+                        onChange={(e) => updateQuestion("q9", e.target.value, setQ9)}
                         onFocus={() => setFocusedField("observacoes_finais")}
                       />
                     </div>
