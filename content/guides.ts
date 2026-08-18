@@ -44,22 +44,17 @@ export const guides: Guide[] = [
     sections: [
       {
         heading: "Os Três Conceitos de Data",
-        paragraphs: [
-          "No IBD, trabalhamos com distinção rigorosa de prazos para garantir previsibilidade:",
-        ],
+        paragraphs: ["No IBD, trabalhamos com distinção rigorosa de prazos para garantir previsibilidade:"],
         bullets: [
           "Data Desejada: Data ideal informada por você no início do contato.",
           "Estimativa: Projeção de cronograma baseada na análise preliminar de escopo e agenda.",
           "Prazo Confirmado: Compromisso oficial de entrega assumido após o cumprimento dos pré-requisitos.",
         ],
-        callout:
-          "O prazo de produção só se torna compromisso após duas condições atendidas: 1. Briefing aprovado; 2. Materiais obrigatórios recebidos.",
+        callout: "O prazo de produção só se torna compromisso após duas condições atendidas: 1. Briefing aprovado; 2. Materiais obrigatórios recebidos.",
       },
       {
         heading: "O que acontece se faltar material?",
-        paragraphs: [
-          "Sem os materiais obrigatórios (textos, logos vetoriais ou fotos), o projeto permanece aguardando. O prazo oficial só começa a contar quando os itens forem enviados.",
-        ],
+        paragraphs: ["Sem os materiais obrigatórios (textos, logos vetoriais ou fotos), o projeto permanece aguardando. O prazo oficial só começa a contar quando os itens forem enviados."],
       },
     ],
   },
@@ -70,17 +65,14 @@ export const guides: Guide[] = [
     sections: [
       {
         heading: "2 Rodadas Estruturadas Inclusas",
-        paragraphs: [
-          "Cada projeto inclui 2 rodadas de revisão completas dentro do escopo definido no briefing aprovado.",
-        ],
+        paragraphs: ["Cada projeto inclui 2 rodadas de revisão completas dentro do escopo definido no briefing aprovado."],
         bullets: [
           "Ajustes de cores, tipografia e hierarquia visual.",
           "Correções ortográficas e refinamentos de diagramação.",
           "Ajuste de posição, proporção e equilíbrio de elementos gráficos.",
           "Alinhamento de detalhes que divergiram do briefing aprovado.",
         ],
-        callout:
-          "Mudanças estruturais de direção criativa, troca completa de conceito ou adição de novos itens não contam como revisão comum; são orçadas como novo escopo.",
+        callout: "Mudanças estruturais de direção criativa, troca completa de conceito ou adição de novos itens não contam como revisão comum; são orçadas como novo escopo.",
       },
     ],
   },
@@ -91,17 +83,14 @@ export const guides: Guide[] = [
     sections: [
       {
         heading: "Checklist de Materiais Recomendados",
-        paragraphs: [
-          "Para garantir o máximo de qualidade técnica e agilidade no desenvolvimento, envie:",
-        ],
+        paragraphs: ["Para garantir o máximo de qualidade técnica e agilidade no desenvolvimento, envie:"],
         bullets: [
           "Logo vetorial: Formatos .AI, .SVG ou .EPS.",
           "Imagens: Fotografias em alta resolução (mínimo 300 DPI para impressão ou 2000px para web).",
           "Textos: Documento editável com copy final revisada e aprovada.",
           "Manual de Marca: Paleta de cores (CMYK/RGB/HEX) e fontes institucionais, se existirem.",
         ],
-        callout:
-          "Todos os materiais são enviados com segurança pelo Portal do Cliente e protegidos por links temporários assinados.",
+        callout: "Todos os materiais são enviados com segurança pelo Portal do Cliente e protegidos por links temporários assinados.",
       },
     ],
   },
@@ -112,15 +101,12 @@ export const guides: Guide[] = [
     sections: [
       {
         heading: "Acompanhamento Ativo",
-        paragraphs: [
-          "Quando uma versão é enviada, precisamos da sua avaliação para avançar ou aplicar ajustes.",
-        ],
+        paragraphs: ["Quando uma versão é enviada, precisamos da sua avaliação para avançar ou aplicar ajustes."],
         bullets: [
           "Regra Dia 3: Após 3 dias úteis sem resposta, enviamos uma mensagem de follow-up para verificar se há dúvidas.",
           "Regra Dia 6: Após 6 dias úteis sem retorno, o projeto entra em pausa programada para liberar a fila de produção.",
         ],
-        callout:
-          "A pausa não é punição. Na retomada, o projeto é reaberto e uma nova estimativa de data é calculada conforme a agenda disponível no momento.",
+        callout: "A pausa não é punição. Na retomada, o projeto é reaberto e uma nova estimativa de data é calculada conforme a disponibilidade operacional do estúdio no momento.",
       },
     ],
   },
@@ -142,31 +128,27 @@ export const guides: Guide[] = [
   {
     slug: "faq",
     title: "Perguntas Frequentes",
-    summary: "Respostas diretas sobre contratação, pagamentos, reuniões e portal.",
+    summary: "Respostas diretas sobre contratação, comunicação, revisões e portal.",
     sections: [
       {
         heading: "Como tenho acesso ao Portal do Cliente?",
-        paragraphs: [
-          "O acesso é exclusivo para clientes com contrato fechado. O administrador ativa seu acesso e você recebe um convite direto por e-mail.",
-        ],
+        paragraphs: ["O acesso é exclusivo para clientes com contrato fechado. O administrador ativa seu acesso e você recebe um convite direto por e-mail."],
       },
       {
-        heading: "Posso agendar uma reunião antes de fechar o projeto?",
-        paragraphs: [
-          "Sim. Você pode utilizar a página de agendamento (/agendar) para marcar uma conversa de alinhamento de 50 minutos.",
-        ],
+        heading: "Preciso marcar uma reunião para começar?",
+        paragraphs: ["Não. O canal oficial de entrada é o briefing guiado em /comecar. Você envia contexto, objetivo e informações do projeto de forma estruturada; a partir disso, o IBD analisa a demanda e prepara os próximos passos, proposta e contrato sem depender de reunião inicial."],
+      },
+      {
+        heading: "Como funciona a comunicação durante o projeto?",
+        paragraphs: ["O processo é assíncrono e estruturado. Briefing, materiais, status, revisões, aprovações e próximos passos ficam registrados no fluxo do projeto, reduzindo mensagens soltas e garantindo contexto para cada decisão."],
       },
       {
         heading: "O que acontece se eu precisar de mais de 2 rodadas de revisão?",
-        paragraphs: [
-          "Caso todas as 2 rodadas sejam utilizadas e ainda haja necessidade de refinamentos adicionais, podemos emitir uma taxa pontual de revisão adicional conforme a complexidade.",
-        ],
+        paragraphs: ["Caso todas as 2 rodadas sejam utilizadas e ainda haja necessidade de refinamentos adicionais, podemos emitir uma taxa pontual de revisão adicional conforme a complexidade."],
       },
       {
         heading: "Os arquivos ficam salvos para sempre no portal?",
-        paragraphs: [
-          "Sim. Todos os projetos concluídos permanecem com seus arquivos finais e histórico de marcos disponíveis no seu portal.",
-        ],
+        paragraphs: ["Os arquivos finais e o histórico do projeto permanecem disponíveis conforme a política de retenção e armazenamento definida pelo IBD."],
       },
     ],
   },
