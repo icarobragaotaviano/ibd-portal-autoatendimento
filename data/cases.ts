@@ -19,10 +19,13 @@ export const cases: PortfolioCase[] = [
     id: "case-wine-gourmet",
     slug: "wine-gourmet",
     client: "Wine Gourmet",
-    title: "Sistema Visual para Comunicação Contínua",
-    challenge: "Volume alto de demandas simultâneas para eventos, rótulos e mídias sociais com identidade inconsistente e retrabalho na produção.",
-    delivery: "Desenvolvimento de guia de estilo visual, biblioteca de templates para redes sociais, padronização de materiais promocionais e sinalização de loja.",
-    result: "Padronização visual em todos os pontos de contato e maior agilidade na criação das peças semanais.",
+    title: "Sistema Visual Contínuo & Materiais Promocionais",
+    challenge:
+      "Volume alto de demandas simultâneas para eventos, rótulos e mídias sociais com identidade inconsistente e retrabalho na produção.",
+    delivery:
+      "Desenvolvimento de guia de estilo visual, biblioteca de templates para redes sociais, padronização de materiais promocionais e sinalização de loja.",
+    result:
+      "Padronização visual em todos os pontos de contato e maior agilidade na criação das peças semanais.",
     services: ["Identidade Visual", "Peças para Redes Sociais", "Material Editorial"],
     cover: "/images/placeholders/portfolio-wine-cover.jpg",
     gallery: [
@@ -35,36 +38,42 @@ export const cases: PortfolioCase[] = [
     usageAuthorized: true,
   },
   {
-    id: "case-vertice-consultoria",
-    slug: "vertice-consultoria",
-    client: "Vértice Gestão",
-    title: "Reposicionamento e Materiais de Autoridade",
-    challenge: "Consultoria corporativa estabelecida no mercado porém com apresentação visual defasada que não refletia a senioridade dos projetos.",
-    delivery: "Redesenho de marca institucional, deck de apresentação comercial para clientes enterprise e templates de relatórios diagnósticos.",
-    result: "Alinhamento entre o valor percebido na proposta comercial e o nível técnico dos serviços prestados.",
-    services: ["Identidade Visual", "Apresentação Comercial", "Material Editorial"],
-    cover: "/images/placeholders/portfolio-vertice-cover.jpg",
+    id: "case-vinho-portugues-sem-frescura",
+    slug: "vinho-portugues-sem-frescura",
+    client: "Vinho Português Sem Frescura",
+    title: "Projeto Editorial 82p & Lançamento Digital",
+    challenge:
+      "Necessidade de transformar um conteúdo técnico denso sobre vinhos portugueses em uma publicação atraente, agradável de ler e com apelo comercial para venda digital.",
+    delivery:
+      "Projeto gráfico completo de 82 páginas, sistema de grid modular, tratamento tipográfico avançado, infográficos e páginas promocionais para campanha.",
+    result:
+      "Publicação com leitura fluida e identidade marcante, pronta para distribuição digital e materiais de suporte a lançamento.",
+    services: ["Material Editorial", "Landing Page", "Peças para Redes Sociais"],
+    cover: "/images/placeholders/portfolio-vinho-portugues-cover.jpg",
     gallery: [
-      "/images/placeholders/portfolio-vertice-01.jpg",
-      "/images/placeholders/portfolio-vertice-02.jpg",
+      "/images/placeholders/portfolio-vinho-01.jpg",
+      "/images/placeholders/portfolio-vinho-02.jpg",
     ],
     order: 20,
     published: true,
     usageAuthorized: true,
   },
   {
-    id: "case-aurora-studio",
-    slug: "aurora-studio",
-    client: "Aurora Studio",
-    title: "Landing Page de Lançamento de Produto Digital",
-    challenge: "Necessidade de estruturar uma página com proposta de valor clara, hierarquia visual refinada e carregamento rápido para campanha de tráfego.",
-    delivery: "Design de wireframe estratégico, interface UI responsiva com foco em conversão e especificações de design system.",
-    result: "Estrutura visual fluida, comunicação direta dos diferenciais e facilidade de leitura tanto no mobile quanto no desktop.",
-    services: ["Landing Page", "Design System"],
-    cover: "/images/placeholders/portfolio-aurora-cover.jpg",
+    id: "case-endoafetos",
+    slug: "endoafetos",
+    client: "EndoAfetos",
+    title: "Identidade Acolhedora, Campanhas & Social Media",
+    challenge:
+      "Comunicação na área da saúde feminina sobre endometriose que demandava acolhimento, rigor informativo e estética empática sem cair no tom excessivamente clínico.",
+    delivery:
+      "Sistema de identidade visual acolhedor, paleta sensível, templates editoriais para redes sociais e peças de campanha informativa.",
+    result:
+      "Presença visual empática e consistente, facilitando a transmissão de informações médicas complexas com acolhimento.",
+    services: ["Identidade Visual", "Peças para Redes Sociais"],
+    cover: "/images/placeholders/portfolio-endoafetos-cover.jpg",
     gallery: [
-      "/images/placeholders/portfolio-aurora-01.jpg",
-      "/images/placeholders/portfolio-aurora-02.jpg",
+      "/images/placeholders/portfolio-endoafetos-01.jpg",
+      "/images/placeholders/portfolio-endoafetos-02.jpg",
     ],
     order: 30,
     published: true,

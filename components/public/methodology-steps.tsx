@@ -5,34 +5,34 @@ export function MethodologySteps() {
     {
       num: "01",
       title: "Briefing",
-      headline: "Toda peça começa com uma conversa.",
+      headline: "Toda peça nasce de uma conversa estruturada.",
       description:
-        "Eu faço as perguntas, você responde do seu jeito, inclusive por áudio quando fizer sentido. Eu confirmo por escrito o que entendi, e você aprova antes da produção.",
+        "Confirmo por escrito o que entendi antes de começar. Sem briefing aprovado, a produção não tem início.",
     },
     {
       num: "02",
       title: "Material",
-      headline: "Logo, fotos, textos, cores e tudo que entra no projeto.",
-      description: "Se faltar alguma coisa, a gente identifica antes de começar.",
+      headline: "Você envia logos, referências e textos.",
+      description: "Se faltar algo crítico para a execução, identificamos antes de rodar o prazo.",
     },
     {
       num: "03",
       title: "Data Confirmada",
-      headline: "Com briefing aprovado e material em mãos, eu confirmo a data.",
-      description: "Antes disso, qualquer data é estimativa.",
+      headline: "Com briefing aprovado e insumos recebidos, a data de entrega é travada no cronograma.",
+      description: "Antes desse alinhamento completo, qualquer data é apenas estimativa.",
     },
     {
       num: "04",
       title: "Entrega e Revisão",
-      headline: "Você recebe a primeira versão.",
+      headline: "Você recebe a primeira versão completa.",
       description:
-        "O projeto inclui 2 rodadas de revisão dentro do briefing aprovado. Mudança de direção ou item novo é novo escopo.",
+        "O projeto inclui 2 rodadas de revisão dentro do escopo. Ajustes finos inclusos; mudança radical é novo escopo.",
     },
     {
       num: "05",
-      title: "Entrega Final",
-      headline: "Com o projeto aprovado e as condições concluídas, os arquivos finais são organizados e entregues.",
-      description: "A próxima demanda pode começar pelo próprio portal.",
+      title: "Fechamento",
+      headline: "Arquivos finais organizados, fechados para produção e disponibilizados para download.",
+      description: "Acesso permanente e organizado através do portal.",
     },
   ];
 

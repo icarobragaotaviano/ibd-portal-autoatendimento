@@ -14,17 +14,17 @@ export function FinalCTA() {
           <span className="eyebrow">Próximo Passo</span>
 
           <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-[var(--text-primary)] max-w-xl leading-tight">
-            Pronto para começar?
+            Vamos tirar o seu projeto do papel?
           </h2>
 
           <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-lg leading-relaxed">
-            Não precisa ter tudo definido. O briefing foi feito exatamente para descobrir o que você precisa e estruturar a melhor entrega.
+            O primeiro passo leva menos de 3 minutos. Me conta qual é a sua necessidade e eu retorno com as perguntas certas para organizarmos a sua demanda.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link href="/comecar">
               <Button variant="primary" size="lg" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                COMEÇAR BRIEFING
+                INICIAR MEU BRIEFING
               </Button>
             </Link>
 

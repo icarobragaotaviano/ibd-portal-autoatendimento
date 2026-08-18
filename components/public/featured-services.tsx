@@ -15,12 +15,12 @@ export function FeaturedServices() {
         <div className="flex flex-col gap-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-4 border-b border-[var(--border)]">
             <div className="flex flex-col gap-2 max-w-xl">
-              <span className="eyebrow">Soluções • Serviços Principais</span>
+              <span className="eyebrow">O que eu faço • Soluções Visuais</span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--text-primary)] tracking-tight">
-                Serviços em destaque
+                Serviços desenhados para necessidades reais
               </h2>
               <p className="text-sm text-[var(--text-secondary)]">
-                Estrutura visual completa para marcas que buscam clareza, consistência e autoridade.
+                Cada projeto recebe uma estrutura sob medida. Selecione a categoria que você precisa para entender os entregáveis ou iniciar o briefing.
               </p>
             </div>
 

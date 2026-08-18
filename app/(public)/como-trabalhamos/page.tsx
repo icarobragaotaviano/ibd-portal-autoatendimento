@@ -21,37 +21,37 @@ export default function ComoTrabalhamosPage() {
     {
       num: "01",
       title: "Briefing antes de tudo",
-      desc: "Toda peça começa com uma conversa estruturada. Sem briefing aprovado, a produção não tem início.",
+      desc: "Sem escopo aprovado, o trabalho não começa.",
     },
     {
       num: "02",
-      title: "Prazo começa com o material",
-      desc: "Logo, fotos, textos e referências precisam estar recebidos para a contagem do cronograma começar.",
+      title: "Prazo após materiais",
+      desc: "O cronômetro só roda quando os arquivos necessários forem enviados.",
     },
     {
       num: "03",
       title: "Data confirmada é compromisso",
-      desc: "Antes de receber briefing e materiais, qualquer data é estimativa. Depois de confirmada, a data é um compromisso.",
+      desc: "Antes do alinhamento completo, qualquer data é apenas estimativa.",
     },
     {
       num: "04",
-      title: "2 rodadas de revisão inclusas",
-      desc: "Ajustes de diagramação, cores e fontes dentro do briefing aprovado estão 100% cobertos em até 2 rodadas estruturadas.",
+      title: "2 rodadas de revisão",
+      desc: "Ajustes de refinamento inclusos; mudanças radicais de direção configuram novo escopo.",
     },
     {
       num: "05",
-      title: "Regras de retorno (Dia 3 / Dia 6)",
-      desc: "Após 3 dias úteis sem retorno sobre uma versão, envio um lembrete. Após 6 dias úteis, o projeto é pausado para não prender a agenda.",
+      title: "Retorno ágil",
+      desc: "Lembrete após 3 dias sem resposta; pausa de cronograma após 6 dias para organizar a fila.",
     },
     {
       num: "06",
-      title: "Escopo acordado",
-      desc: "O briefing aprovado define o limite do que será entregue. Mudança de direção criativa ou novas peças entram como novo escopo.",
+      title: "Escopo respeitado",
+      desc: "Novas peças adicionadas durante o processo entram como demanda complementar.",
     },
     {
       num: "07",
-      title: "Atendimento profissional",
-      desc: "Comunicação de segunda a sexta, das 09:00 às 18:00 (Fortaleza). Sem mensagens fora de hora ou reuniões desnecessárias.",
+      title: "Atendimento focado",
+      desc: "De segunda a sexta, das 09:00 às 18:00 (horário de Brasília/Fortaleza).",
     },
   ];
 

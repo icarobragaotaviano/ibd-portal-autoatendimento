@@ -20,13 +20,13 @@ export function AboutPreview() {
 
             <div className="flex flex-col gap-4 text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
               <p>
-                Sou designer gráfico há mais de 10 anos. Criei o IBD para trabalhar de um jeito diferente: você fala direto comigo, sem intermediário, sem reuniões desnecessárias e sem prazos que mudam do nada.
+                Sou designer gráfico e trabalho há mais de uma década criando marcas, publicações editoriais e interfaces digitais. Criei o IBD para trabalhar exatamente como acredito: com atenção concentrada, contato direto com quem decide e processos que não geram desgaste.
               </p>
               <p>
-                Meu processo é simples: entender o que você precisa, fazer as perguntas certas e entregar no prazo combinado.
+                Aqui você não fala com intermediários. A mesma pessoa que analisa o seu briefing é quem senta diante da tela, pensa na tipografia, organiza o grid e fecha os arquivos finais.
               </p>
               <p className="font-bold text-[var(--text-primary)]">
-                Se você precisa de design que funciona e de um processo que não te dá dor de cabeça, estamos prontos.
+                Se você precisa de design que funciona e de um processo transparente para chegar lá, me conta o que você precisa.
               </p>
             </div>
 

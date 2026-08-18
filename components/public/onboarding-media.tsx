@@ -15,17 +15,17 @@ export type OnboardingMediaProps = {
   transcript?: string;
 };
 
-const DEFAULT_TRANSCRIPT = `Oi, eu sou o Ícaro, do IBD.
+const DEFAULT_TRANSCRIPT = `Eu sou Ícaro Braga. Sou designer gráfico e o IBD é meu estúdio.
 
-Antes de falar de preço ou prazo, deixa eu te mostrar como a gente trabalha.
+Muita gente chega ao design sabendo que precisa comunicar melhor, mas sem saber exatamente qual formato, peça ou caminho resolve isso.
 
-Todo projeto começa com um briefing. Eu te faço poucas perguntas, uma rodada de cada vez, até entender o que você precisa de verdade.
+Meu trabalho começa justamente aí: entender o problema de comunicação antes de abrir qualquer software de criação.
 
-Quando o briefing está aprovado e o material chega, eu te dou uma data. Essa data é um compromisso meu com você.
+Eu organizo briefing, recebo os materiais, fecho o escopo e confirmo o prazo de entrega. Depois que o projeto começa, você acompanha tudo pelo portal.
 
-Depois do contrato, você acompanha tudo em um portal: status do projeto, materiais, revisões e próximos passos.
+Durante todo o processo, você fala diretamente comigo: a mesma pessoa que entendeu a sua demanda e que está criando as suas peças.
 
-Se fez sentido, escolhe um serviço na galeria ou começa o briefing agora.`;
+Se você precisa de design que resolve e de um processo que dá segurança, me conta o que você precisa.`;
 
 export function OnboardingMedia({
   type = "video",
@@ -44,11 +44,11 @@ export function OnboardingMedia({
             <span className="eyebrow">Apresentação • Onboarding</span>
 
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--text-primary)] tracking-tight">
-              Antes de começar
+              Como é trabalhar comigo
             </h2>
 
             <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
-              Veja em menos de 2 minutos como funciona o método de trabalho, prazos transparentes e acompanhamento direto pelo portal.
+              Antes de falarmos sobre escopo ou investimento, entenda como eu conduzo cada etapa: do primeiro alinhamento à entrega dos arquivos no portal.
             </p>
 
             {/* Transcript Toggle Button */}

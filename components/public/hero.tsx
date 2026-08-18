@@ -19,7 +19,7 @@ export function Hero() {
             </h1>
 
             <p className="text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed max-w-xl">
-              Sou o Ícaro Braga. Transformo o que você precisa dizer em peças que funcionam: identidade, social media e materiais para o mundo real.
+              Eu transformo o que você precisa comunicar — uma ideia, um lançamento, um conteúdo ou um serviço — em peças que as pessoas entendem, reconhecem e usam. Sem complicação, arquivos perdidos ou prazos indefinidos.
             </p>
 
             <div className="p-4 rounded-[var(--radius-md)] bg-[var(--surface-elevated)] border-l-2 border-l-[var(--accent)] border border-[var(--border)] max-w-xl text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">

@@ -8,31 +8,31 @@ export function WorkingTogetherSummary() {
   const agreements = [
     {
       title: "Briefing antes de tudo",
-      description: "Sem briefing confirmado, a produção não começa.",
+      description: "Sem escopo aprovado, o trabalho não começa.",
     },
     {
-      title: "Prazo começa com o material",
-      description: "A produção começa quando os materiais obrigatórios chegam.",
+      title: "Prazo após materiais",
+      description: "O cronômetro só roda quando os arquivos necessários forem enviados.",
     },
     {
       title: "Data confirmada é compromisso",
-      description: "Antes da confirmação, qualquer data é estimativa.",
+      description: "Antes do alinhamento completo, qualquer data é apenas estimativa.",
     },
     {
       title: "2 rodadas de revisão",
-      description: "Ajustes dentro do briefing estão incluídos. Mudança de direção é novo escopo.",
+      description: "Ajustes de refinamento inclusos; mudanças radicais de direção configuram novo escopo.",
     },
     {
-      title: "Retorno",
-      description: "Após 3 dias úteis sem resposta, envio um lembrete. Após 6 dias úteis, o projeto entra em pausa.",
+      title: "Retorno ágil",
+      description: "Lembrete após 3 dias sem resposta; pausa de cronograma após 6 dias para organizar a fila.",
     },
     {
-      title: "Escopo",
-      description: "O briefing aprovado define o que será produzido. Novas demandas entram como novo trabalho.",
+      title: "Escopo respeitado",
+      description: "Novas peças adicionadas durante o processo entram como demanda complementar.",
     },
     {
-      title: "Atendimento",
-      description: "Segunda a sexta-feira, das 09:00 às 18:00 (Fortaleza).",
+      title: "Atendimento focado",
+      description: "De segunda a sexta, das 09:00 às 18:00 (horário de Brasília/Fortaleza).",
     },
   ];
 
@@ -41,12 +41,12 @@ export function WorkingTogetherSummary() {
       <Container size="lg">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <span className="eyebrow">Alinhamento • Processo Transparente</span>
+            <span className="eyebrow">Alinhamento • Regras Claras</span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--text-primary)] tracking-tight">
-              Como trabalhamos juntos
+              Combinados que protegem o seu tempo e o meu
             </h2>
             <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
-              Processo claro não é burocracia. É o que deixa o projeto tranquilo para os dois lados.
+              Processo claro não é burocracia: é o que garante que o seu projeto seja entregue com tranquilidade e pontualidade.
             </p>
           </div>
 

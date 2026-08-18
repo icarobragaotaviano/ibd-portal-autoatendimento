@@ -54,16 +54,13 @@ export default function QuemSouPage() {
 
               <div className="flex flex-col gap-4 text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
                 <p>
-                  Sou designer gráfico com mais de 10 anos de experiência desenvolvendo identidades visuais, diagramação editorial, landing pages e peças de comunicação estratégica.
+                  Sou designer gráfico e trabalho há mais de uma década criando marcas, publicações editoriais e interfaces digitais. Criei o IBD para trabalhar exatamente como acredito: com atenção concentrada, contato direto com quem decide e processos que não geram desgaste.
                 </p>
                 <p>
-                  Criei o IBD para trabalhar do jeito que eu acredito que o design deve funcionar: próximo, direto e sem enrolação.
-                </p>
-                <p>
-                  Quando você contrata o IBD, você fala com quem cria. Não tem executivo de contas, não tem intermediário, não tem reunião de alinhamento que podia ser um áudio ou e-mail.
+                  Aqui você não fala com intermediários. A mesma pessoa que analisa o seu briefing é quem senta diante da tela, pensa na tipografia, organiza o grid e fecha os arquivos finais.
                 </p>
                 <p className="font-bold text-[var(--text-primary)]">
-                  Meu compromisso é simples: entender o que o seu negócio precisa, criar peças que funcionam e entregar no prazo combinado.
+                  Se você precisa de design que funciona e de um processo transparente para chegar lá, me conta o que você precisa.
                 </p>
               </div>
 
