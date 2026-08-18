@@ -1,26 +1,35 @@
 # IBD — Portal de Autoatendimento para Clientes
 
-Base completa para finalizar no Antigravity e publicar na Vercel.
+Portal full-stack para aquisição, onboarding e gestão de projetos do **IBD — Ícaro Braga Designer**, com jornada assíncrona e estruturada.
 
-O produto combina duas jornadas:
+## Jornada oficial
 
-1. **Agendar conversa inicial** — mostra apenas horários livres e cria evento no Google Calendar.
-2. **Solicitar projeto de design** — recebe a demanda em etapas, apresenta orientações e gera protocolo de acompanhamento.
+```text
+Visitante
+  → Site público
+  → /comecar
+  → Solicitação + Briefing Guiado
+  → Proposta
+  → Contrato
+  → Ativação do cliente
+  → Portal do Cliente
+```
 
-Também inclui uma **Central de Guias** com regras de briefing, prazo, materiais, revisões, retorno/pausa, escopo e FAQ.
+Não existe etapa pública de agendamento de reunião. O briefing guiado é o canal oficial de entrada e registra contexto suficiente para análise, proposta e próximos passos sem depender de sincronização de agenda.
 
 ## Stack
 
 - Next.js 16.3.1 + React 19.2.8
 - TypeScript
 - Tailwind CSS 4.3.3
-- Google Calendar API via `googleapis`
+- Supabase: PostgreSQL, Auth e Storage
+- Resend: e-mails transacionais
+- Vercel: hospedagem e cron
 - Zod
-- Luxon (`America/Fortaleza` por padrão)
-- Neon Postgres opcional
+- Luxon (`America/Fortaleza` para regras operacionais)
 - Vitest
 
-## Começar em 2 minutos — modo mock
+## Começar localmente
 
 ```bash
 npm install
@@ -30,62 +39,46 @@ npm run dev
 
 Abra `http://localhost:3000`.
 
-No modo padrão, **não é necessário configurar Google nem banco**. A UI, a disponibilidade simulada, o agendamento e o fluxo de solicitação funcionam para desenvolvimento.
+Para desenvolvimento, os providers podem permanecer em modo `mock`. Em produção, configure Supabase e Resend conforme `.env.example`.
 
-## Ativar Google Calendar real
+## Serviços externos necessários
 
-1. Siga `docs/03-GOOGLE-CALENDAR.md`.
-2. Preencha no `.env.local`:
+1. **Supabase** — banco, autenticação e armazenamento de arquivos.
+2. **Resend** — e-mails transacionais.
+3. **Vercel** — deploy, funções serverless e cron.
 
-```env
-CALENDAR_MODE="google"
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-GOOGLE_REFRESH_TOKEN="..."
-GOOGLE_CALENDAR_ID="primary"
-GOOGLE_MEET_ENABLED="true"
-```
-
-3. Reinicie `npm run dev`.
-
-## Ativar persistência Neon
-
-1. Crie um banco Postgres no Neon.
-2. Execute `database/schema.sql`.
-3. Configure:
-
-```env
-DATA_MODE="neon"
-DATABASE_URL="postgresql://..."
-```
-
-Sem Neon, `DATA_MODE=mock` usa memória e serve apenas para prototipação/desenvolvimento.
-
-## Deploy Vercel
-
-Leia `docs/04-VERCEL.md`.
+Não é necessário criar projeto, OAuth ou credenciais no Google Cloud/Google Calendar.
 
 ## Rotas principais
 
 | Rota | Função |
 |---|---|
-| `/` | Home e escolha da jornada |
-| `/agendar` | Agenda e confirmação |
-| `/solicitar` | Wizard de nova demanda |
+| `/` | Site público |
+| `/servicos` | Catálogo de serviços |
+| `/portfolio` | Portfólio autorizado |
+| `/comecar` | Entrada oficial de novos projetos |
+| `/comecar/briefing` | Briefing guiado |
 | `/guia` | Central de guias |
-| `/guia/[slug]` | Conteúdo de cada guia |
-| `/status` | Consulta por protocolo + e-mail |
-| `/confirmacao` | Pós-agendamento/pós-solicitação |
-| `/api/availability` | Horários livres |
-| `/api/book` | Cria agendamento |
-| `/api/requests` | Cria solicitação |
-| `/api/status` | Consulta solicitação |
+| `/status` | Consulta de solicitações legadas por protocolo + e-mail |
+| `/login` | Acesso ao portal |
+| `/portal` | Área do cliente |
+| `/admin` | Cockpit administrativo |
+| `/api/prospects` | Cria prospect |
+| `/api/portal/*` | Operações do portal autenticado |
+| `/api/admin/*` | Operações administrativas |
+| `/api/cron/project-status` | Regras automáticas de 3/6 dias úteis |
 | `/api/health` | Diagnóstico básico |
 
-## Para continuar no Antigravity
+## Verificação
 
-Abra a pasta do projeto e use `docs/06-PROMPT-ANTIGRAVITY.md` como prompt inicial. O arquivo `AGENTS.md` contém as regras que o agente deve preservar.
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-## Origem das regras
+## Documentação
 
-As decisões de produto e conteúdo foram consolidadas a partir do briefing fornecido em `docs/referencia/chat-Vibe-Coding-App-com-Google-Agenda.txt`. Decisões adicionais de engenharia estão marcadas em `docs/01-PRODUTO-E-REGRAS.md`.
+Comece por `docs/00-INDICE.md`, `docs/01-PRODUTO-E-REGRAS.md`, `docs/02-ARQUITETURA.md` e `docs/14-SITE-PUBLICO.md`.
+
+O briefing histórico que originou o projeto continua preservado em `docs/referencia/`, mas não representa necessariamente a arquitetura vigente. A documentação canônica é a pasta `docs/` atualizada.
