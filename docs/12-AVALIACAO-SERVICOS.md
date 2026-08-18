@@ -24,11 +24,11 @@ Para o MVP e a evolução de longo prazo do IBD Portal, o **Supabase é a escolh
 ### 2.1. Responsabilidades Assumidas pelo Supabase
 
 1. **Database:**
-   - Substituição transparente do Neon. Armazenamento de solicitações (`client_requests`), logs de alteração de status e agendas.
+   - Substituição transparente do Neon. Armazenamento de solicitações (`client_requests`), prospects, clientes, projetos e logs de alteração de status.
 2. **Storage (Envio de Arquivos):**
    - Permitirá que o cliente faça upload de materiais, logos, referências e briefings em PDF diretamente pelo portal, gerando URLs de download seguras e temporárias.
 3. **Autenticação (Auth):**
-   - Controle de acesso para a área `/admin` do designer e, no futuro, permitindo que cada cliente tenha seu próprio painel autenticado para visualizar solicitações e aprovar rodadas de revisão.
+   - Controle de acesso para a área `/admin` do designer e para o portal autenticado de clientes.
 
 ---
 
@@ -59,7 +59,6 @@ create table public.client_requests (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Indices para otimização
 create index idx_requests_email on public.client_requests(client_email);
 create index idx_requests_status on public.client_requests(status);
 
@@ -68,7 +67,7 @@ create table public.request_files (
   id uuid primary key default uuid_generate_v4(),
   request_id varchar(30) references public.client_requests(id) on delete cascade,
   file_name varchar(255) not null,
-  file_path text not null, -- Caminho do bucket Supabase Storage
+  file_path text not null,
   file_size integer,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -76,7 +75,10 @@ create table public.request_files (
 
 ---
 
-## 4. Integração de E-mail (Resend) & Cron (Vercel)
+## 4. Integrações Externas Oficiais
 
-- **Resend:** Utilizado para e-mails transacionais utilizando o domínio verificado do estúdio.
-- **Vercel Cron:** Execução diária via rotina automatizada (`CRON_SECRET`) para verificar solicitações paradas em `aguardando_retorno` por 3 dias úteis (dispara lembrete) ou 6 dias úteis (altera status para `pausado`).
+- **Supabase:** Banco de Dados, Autenticação e Storage.
+- **Resend:** E-mails transacionais utilizando o domínio verificado do estúdio.
+- **Vercel:** Hospedagem e execução da rotina Cron protegida por `CRON_SECRET` para regras de 3 e 6 dias úteis.
+
+A arquitetura vigente não requer Google Cloud, Google Calendar, OAuth do Google ou serviço de agendamento.
