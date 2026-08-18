@@ -5,55 +5,74 @@
 ```text
 Browser
   │
-  ├── /agendar ────────────────┐
-  │                            ├── /api/availability ── Calendar Provider
-  │                            └── /api/book ───────────┬─ Google Calendar
-  │                                                     └─ mock
+  ├── Site público
+  │     └── /comecar
+  │           └── /api/prospects
+  │                 └── Supabase/Postgres
   │
-  ├── /solicitar ─────────────── /api/requests ──────── Data Provider
-  │                                                     ├─ Neon Postgres
-  │                                                     └─ mock memory
+  ├── Briefing guiado
+  │     └── /api/prospects/[id]/briefing
   │
-  └── /status ────────────────── /api/status ─────────── Data Provider
+  ├── Portal do Cliente
+  │     ├── projetos
+  │     ├── materiais ───────── Supabase Storage
+  │     ├── revisões
+  │     └── aprovações
+  │
+  ├── Admin
+  │     ├── prospects
+  │     ├── propostas
+  │     ├── contratos
+  │     └── ativação de clientes
+  │
+  └── E-mails transacionais ─── Resend
+
+Vercel
+  ├── Next.js / Route Handlers
+  └── Cron de regras 3/6 dias úteis
 ```
 
 ## Camadas
 
 ### `app/`
-Rotas e Route Handlers do Next.js App Router.
+Rotas públicas, portal, admin e Route Handlers do Next.js App Router.
 
 ### `components/`
-UI reutilizável e componentes client-side de interação.
+UI reutilizável, formulários e componentes de próxima ação/status.
 
-### `lib/calendar/`
-Provider de disponibilidade e criação de evento. Nenhuma credencial Google chega ao browser.
+### `lib/domain/`
+Regras puras de estados, prazos, revisões e dias úteis.
 
-### `lib/data/`
-Provider de persistência. Em produção, use Neon. O mock serve somente para desenvolvimento.
+### `lib/services/database/`
+Persistência e acesso ao Supabase/Postgres.
 
-### `lib/scheduling.ts`
-Regras puras de agenda: dias úteis, horário comercial, duração, buffer, antecedência e conflito.
+### `lib/services/storage/`
+Uploads e URLs seguras via Supabase Storage.
+
+### `lib/services/email/`
+E-mails transacionais via Resend.
 
 ### `content/`
-Guias e mensagens de orientação em TypeScript, fáceis de editar e renderizar.
+Guias e mensagens de orientação editáveis.
 
-## APIs
+## APIs principais
 
-### `GET /api/availability?date=YYYY-MM-DD`
-Retorna horários livres para um dia.
+- `POST /api/prospects` — cria novo prospect a partir de `/comecar`.
+- `POST /api/prospects/[id]/briefing` — salva briefing modular.
+- `POST /api/admin/activate-client` — converte prospect formalizado em cliente/projeto.
+- `GET /api/portal/projects` — lista projetos do cliente autenticado.
+- `GET /api/portal/projects/[id]` — detalhes e próxima ação.
+- `POST /api/portal/projects/[id]/materials` — envia materiais.
+- `POST /api/portal/projects/[id]/revisions` — solicita revisão estruturada.
+- `POST /api/cron/project-status` — aplica regras automáticas de acompanhamento/pausa.
+- `GET /api/health` — diagnóstico básico, sem segredos.
 
-### `POST /api/book`
-Valida dados do cliente, revalida disponibilidade e cria evento.
+## Integrações externas
 
-### `POST /api/requests`
-Cria uma demanda e devolve protocolo.
+A aplicação depende somente de:
 
-### `POST /api/status`
-Recebe `{ id, email }` e devolve status se ambos coincidirem.
+- **Supabase** — Database, Auth e Storage.
+- **Resend** — e-mails transacionais.
+- **Vercel** — hospedagem e cron.
 
-### `GET /api/health`
-Mostra modo de Calendar e dados, sem revelar segredos.
-
-## Estratégia de concorrência
-
-`POST /api/book` consulta novamente a disponibilidade antes de inserir o evento. Ainda existe uma pequena janela de corrida entre consulta e inserção, inerente a uma implementação simples de Calendar. Para volume alto, evoluir para lock/transação externa ou calendário dedicado por slot.
+Não há Calendar Provider, rota de disponibilidade ou criação de eventos.
