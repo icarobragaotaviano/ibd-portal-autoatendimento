@@ -1,26 +1,24 @@
-# Validação do pacote gerado
+# Validação do projeto
 
-Data da validação: 2026-08-16.
+## Decisão de arquitetura vigente
 
-## Verificações concluídas
+A jornada pública de agendamento e a integração com Google Calendar foram removidas. O fluxo oficial é:
 
-- Estrutura de diretórios e rotas criada.
-- `package.json` e demais JSONs válidos.
-- 42 arquivos `.ts/.tsx` passaram por parsing/transpilação sintática usando o compilador TypeScript disponível no ambiente, com **0 erros sintáticos**.
-- Briefing original preservado em `docs/referencia/`.
-- Configuração separa mock e integrações reais.
-- Nenhum segredo foi incluído no pacote.
+`Site Público → /comecar → Briefing Guiado → Proposta → Contrato → Ativação → Portal do Cliente`.
 
-## Verificação não concluída neste ambiente
+## Verificações estruturais esperadas
 
-`npm install` não pôde acessar `registry.npmjs.org` por falha de resolução DNS (`EAI_AGAIN`). Por isso, não foi possível executar aqui:
+- `/agendar` inexistente.
+- `/api/availability`, `/api/book`, `/api/calendar/availability` e `/api/calendar/book` inexistentes.
+- `lib/calendar/`, `lib/services/calendar/` e `lib/scheduling.ts` inexistentes.
+- `BookingSchema` inexistente.
+- `googleapis` ausente das dependências diretas.
+- `.env.example` sem `CALENDAR_*`, `GOOGLE_*` ou `BOOKING_*`.
+- `/api/health` sem `calendarMode` ou `scheduling`.
+- Navegação pública direciona novos projetos para `/comecar`.
+- `APP_TIMEZONE=America/Fortaleza` permanece para regras de dias úteis e operação.
 
-- `npm test` com Vitest;
-- `npm run lint` com as dependências do projeto;
-- `npm run build` com Next.js;
-- geração confiável de `package-lock.json`.
-
-Não foi criado um lockfile fictício. No Antigravity ou em máquina com internet, execute:
+## Validação automatizada obrigatória antes do merge
 
 ```bash
 npm install
@@ -29,13 +27,20 @@ npm run lint
 npm run build
 ```
 
-Se todos passarem, faça commit do `package-lock.json` gerado.
+Também execute uma busca global por termos legados:
 
-## Testes incluídos
+```bash
+rg -n "(/agendar|googleapis|Google Calendar|BookingSchema|CALENDAR_|GOOGLE_|BOOKING_|api/availability|api/book)" \
+  --glob '!docs/referencia/**' \
+  --glob '!package-lock.json'
+```
 
-- geração de slots em dias úteis;
-- bloqueio de fim de semana;
-- antecedência mínima de 24h;
-- conflito com evento ocupado + buffer;
-- consentimento obrigatório;
-- validação de solicitação mínima.
+O resultado esperado no código e documentação canônica é vazio, exceto por menções explícitas que expliquem que a integração foi removida.
+
+## Observação sobre `package-lock.json`
+
+Após remover `googleapis` de `package.json`, regenere o lockfile com `npm install` ou `npm install --package-lock-only` e confirme que pacotes exclusivos do Google não permanecem como dependências órfãs.
+
+## Histórico
+
+Validações anteriores que cobriam geração de slots, antecedência de 24h, buffer e conflitos de agenda são históricas e não fazem mais parte da suíte atual.
