@@ -12,34 +12,6 @@ export type RequestStatus =
 
 export type Urgency = "normal" | "urgente";
 
-export interface BusyInterval {
-  start: string;
-  end: string;
-}
-
-export interface AvailableSlot {
-  start: string;
-  end: string;
-  label: string;
-  dateLabel: string;
-}
-
-export interface BookingInput {
-  service: string;
-  start: string;
-  name: string;
-  email: string;
-  whatsapp: string;
-  notes: string;
-  consent: true;
-}
-
-export interface BookingResult {
-  id: string;
-  eventLink?: string;
-  meetLink?: string;
-}
-
 export interface ClientRequestInput {
   service: string;
   description: string;
