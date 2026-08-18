@@ -3,26 +3,41 @@
 ## Produto
 - [ ] Revisar nome oficial do estúdio e domínio.
 - [ ] Revisar lista real de serviços.
-- [ ] Confirmar horários de atendimento.
 - [ ] Confirmar textos dos guias.
-- [ ] Adicionar política de privacidade e termos.
+- [ ] Adicionar/revisar política de privacidade e termos.
+- [ ] Confirmar que `/comecar` é o único canal público de entrada de novos projetos.
+- [ ] Confirmar que não existem links, CTAs ou mensagens oferecendo agendamento público.
 
-## Google Calendar
-- [ ] Projeto Google Cloud criado.
-- [ ] Calendar API ativada.
-- [ ] OAuth consent configurado.
-- [ ] Refresh token gerado.
-- [ ] `CALENDAR_MODE=google` testado.
-- [ ] Convite chega ao cliente.
-- [ ] Meet é criado quando habilitado.
-- [ ] Eventos privados nunca têm detalhes expostos na UI.
+## Jornada assíncrona
+- [ ] `/comecar` cria prospect com consentimento LGPD.
+- [ ] Manual do Cliente é apresentado no onboarding.
+- [ ] Briefing guiado funciona com até 3 perguntas por etapa.
+- [ ] Proposta e contrato ficam vinculados ao prospect.
+- [ ] Ativação administrativa só ocorre após contrato formalizado.
+- [ ] Portal mostra próxima ação, materiais, revisões e aprovações.
+- [ ] Confirmação pós-envio não contém Google Meet, evento ou referência de agenda.
 
-## Persistência
-- [ ] Neon criado.
-- [ ] `database/schema.sql` executado.
-- [ ] `DATA_MODE=neon` configurado.
-- [ ] Solicitação persiste após novo deploy/cold start.
-- [ ] Consulta por protocolo + e-mail funciona.
+## Supabase
+- [ ] Projeto Supabase criado.
+- [ ] Migrações executadas.
+- [ ] RLS revisada e testada.
+- [ ] Auth configurado para admin e clientes.
+- [ ] Storage privado configurado.
+- [ ] URLs assinadas testadas.
+- [ ] Persistência sobrevive a novo deploy/cold start.
+
+## Resend
+- [ ] Domínio/remetente verificado.
+- [ ] `RESEND_API_KEY` configurada somente no servidor.
+- [ ] E-mails transacionais essenciais chegam corretamente.
+- [ ] Conteúdo dos e-mails não expõe PII além do necessário.
+
+## Automação
+- [ ] `CRON_SECRET` configurado.
+- [ ] Regra de 3 dias úteis testada.
+- [ ] Regra de 6 dias úteis testada.
+- [ ] Retomada recalcula prazo conforme disponibilidade operacional.
+- [ ] `APP_TIMEZONE=America/Fortaleza` validado.
 
 ## Qualidade
 - [ ] `npm test` passa.
@@ -32,10 +47,12 @@
 - [ ] Desktop testado.
 - [ ] Navegação por teclado testada.
 - [ ] Mensagens de erro revisadas.
+- [ ] Busca global confirma ausência de `/agendar`, `googleapis`, `BookingSchema`, `CALENDAR_*`, `GOOGLE_*` e `BOOKING_*` no código vigente.
 
 ## Produção
-- [ ] Preview usa mock para evitar reuniões acidentais.
-- [ ] Production usa Google + Neon.
+- [ ] Supabase configurado para produção.
+- [ ] Resend configurado para produção.
+- [ ] Vercel configurada com variáveis corretas.
 - [ ] Domínio configurado.
 - [ ] Analytics somente após revisar consentimento/privacidade.
-- [ ] Backup/retention do banco definido.
+- [ ] Backup e política de retenção definidos.
