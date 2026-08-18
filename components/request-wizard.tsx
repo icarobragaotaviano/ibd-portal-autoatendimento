@@ -51,7 +51,7 @@ export function RequestWizard() {
         <div className="eyebrow font-mono">Etapa {step + 1} de {steps.length} · {steps[step]}</div>
 
         {step === 0 && <div className="grid gap-5 mt-6">
-          <div className="field"><label htmlFor="service">Qual é o serviço?</label><select id="service" className="input" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })}>{services.filter(s => s.value !== "conversa_inicial").map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
+          <div className="field"><label htmlFor="service">Qual é o serviço?</label><select id="service" className="input" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })}>{services.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
           <div className="field"><label htmlFor="description">O que você precisa e qual é o objetivo?</label><textarea id="description" className="input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Ex.: preciso de 5 peças para divulgar um evento e quero destacar inscrições." required /><small className="text-muted">Não precisa escrever um briefing completo. Esta é a primeira leitura da demanda.</small></div>
           <div className="field"><label htmlFor="desiredDate">Para quando você gostaria?</label><input id="desiredDate" className="input" type="date" value={form.desiredDate} onChange={(e) => setForm({ ...form, desiredDate: e.target.value })} /><small className="text-muted">Esta data é uma referência, não um prazo confirmado.</small></div>
         </div>}
