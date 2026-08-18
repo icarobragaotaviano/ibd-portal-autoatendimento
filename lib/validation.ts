@@ -69,37 +69,12 @@ export const ProjectRequestSchema = z.object({
   desired_deadline: z.string().date().optional().nullable(),
 });
 
-// 7. Booking Input (Calendar)
-export const BookingSchema = z
-  .object({
-    service: z.string().trim().min(1).max(80).optional(),
-    meeting_type: z.string().trim().min(1).max(80).optional().default("conversa_inicial"),
-    start: z.string().datetime({ offset: true }).optional(),
-    start_time: z.string().datetime({ offset: true }).optional(),
-    name: z.string().trim().min(2, "Informe seu nome.").max(120).optional(),
-    client_name: z.string().trim().min(2, "Informe seu nome.").max(120).optional(),
-    email: z.string().trim().email("Informe um e-mail válido.").max(254).optional(),
-    client_email: z.string().trim().email("Informe um e-mail válido.").max(254).optional(),
-    whatsapp: phone.optional(),
-    notes: z.string().trim().max(1500).default(""),
-    consent: z.literal(true),
-  })
-  .transform((data) => ({
-    meeting_type: data.meeting_type || data.service || "conversa_inicial",
-    start_time: data.start_time || data.start || "",
-    client_name: data.client_name || data.name || "",
-    client_email: data.client_email || data.email || "",
-    whatsapp: data.whatsapp || "",
-    notes: data.notes,
-    consent: true as const,
-  }));
-
-// 8. Revision Feedback Input
+// 7. Revision Feedback Input
 export const RevisionFeedbackSchema = z.object({
   notes: z.string().trim().min(5, "Informe os apontamentos de revisão.").max(5000),
 });
 
-// 9. Legacy Schemas for backward compatibility
+// 8. Legacy Schemas for backward compatibility
 export const ClientRequestSchema = z.object({
   service: z.string().trim().min(1),
   description: z.string().trim().min(10),
