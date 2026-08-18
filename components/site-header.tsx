@@ -6,7 +6,6 @@ export function SiteHeader() {
   return (
     <header className="border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-md sticky top-0 z-40 text-[var(--text-primary)]">
       <div className="container-shell flex min-h-[72px] items-center justify-between gap-4 py-3">
-        {/* Brand Logo */}
         <Link
           href="/"
           className="flex items-center gap-3 group focus-visible:outline-none"
@@ -25,7 +24,6 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        {/* Navigation */}
         <nav
           className="flex items-center gap-1 sm:gap-2 text-sm font-display font-bold"
           aria-label="Navegação Principal"
@@ -35,13 +33,6 @@ export function SiteHeader() {
             href="/guia"
           >
             Manual & Guias
-          </Link>
-
-          <Link
-            className="hidden sm:inline-flex px-3.5 py-2 rounded-full text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)] transition-colors"
-            href="/agendar"
-          >
-            Agendar
           </Link>
 
           <Link
