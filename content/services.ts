@@ -1,5 +1,4 @@
 export const services = [
-  { value: "conversa_inicial", label: "Conversa inicial / diagnóstico" },
   { value: "identidade_visual", label: "Identidade visual" },
   { value: "social_media", label: "Peças para redes sociais" },
   { value: "landing_page", label: "Landing page / página de vendas" },
