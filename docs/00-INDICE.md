@@ -12,6 +12,7 @@
 10. `11-MODELO-DADOS.md` — estados e campos persistidos.
 11. `12-AVALIACAO-SERVICOS.md` — arquitetura de Supabase e e-mail transacional.
 12. `14-SITE-PUBLICO.md` — camada pública comercial e fluxo oficial de aquisição.
-13. `referencia/` — materiais históricos fornecidos pelo usuário; podem conter decisões substituídas pela documentação canônica atual.
+13. `GUIA-IMPLANTACAO-PRODUCAO.md` — guia passo a passo de configuração e deploy (Supabase, Resend, Vercel).
+14. `referencia/` — materiais históricos fornecidos pelo usuário; podem conter decisões substituídas pela documentação canônica atual.
 
 > A integração com Google Calendar e a rota pública `/agendar` foram removidas. Não é necessário criar projeto ou credenciais no Google Cloud.
