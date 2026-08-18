@@ -2,40 +2,40 @@
 
 ## Dados coletados
 
-### Agendamento
+### Solicitação / Prospect
 - nome;
 - e-mail;
 - WhatsApp;
-- necessidade resumida;
-- serviço;
-- data/horário;
+- serviço de interesse;
+- descrição da necessidade;
+- prazo desejado, quando informado;
 - consentimento.
 
-### Solicitação
-- nome;
-- e-mail;
-- WhatsApp;
-- descrição da demanda;
-- prazo desejado;
-- informações sobre materiais/conteúdo/urgência;
-- consentimento.
+### Briefing e Projeto
+- respostas de briefing;
+- materiais enviados;
+- registros de revisão e aprovação;
+- histórico de status e próximas ações.
 
 ## Princípios aplicados
 
-- Minimização: não solicitar documento, endereço ou dado sensível sem necessidade.
-- Finalidade explícita: consentimento informa uso para agendamento/gestão da solicitação.
+- Minimização: coletar somente dados necessários ao atendimento e execução do projeto.
+- Finalidade explícita: consentimento informa uso para análise da solicitação, proposta, contratação e gestão do projeto.
 - Segredos apenas no servidor.
-- Status exige protocolo + e-mail.
-- A API não devolve detalhes de eventos ocupados do Google; apenas slots livres.
+- Supabase RLS e autenticação protegem dados do portal.
+- Storage privado e URLs assinadas para materiais quando aplicável.
+- Logs evitam conteúdo pessoal desnecessário.
+- Não existe integração com Google Calendar nem coleta de dados para agendamento.
 
 ## Antes de produção
 
 - Definir política de privacidade pública.
-- Definir prazo de retenção de solicitações concluídas.
-- Definir canal para acesso/correção/exclusão de dados.
-- Configurar logs sem conteúdo pessoal desnecessário.
-- Verificar DPA/termos dos fornecedores usados (Vercel, Google, Neon).
-- Se o portal vier a processar dados de saúde, revisar base legal, minimização e controles adicionais antes de coletá-los.
+- Definir prazo de retenção de prospects, projetos e arquivos concluídos.
+- Definir canal para acesso, correção e exclusão de dados.
+- Revisar RLS de todas as tabelas privadas.
+- Revisar permissões dos buckets do Supabase Storage.
+- Verificar DPA/termos dos fornecedores usados: Vercel, Supabase e Resend.
+- Garantir que e-mails transacionais não exponham informações sensíveis além do necessário.
 
 ## Observação
 
