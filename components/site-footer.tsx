@@ -20,28 +20,16 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-wrap items-center gap-6 text-xs font-mono uppercase tracking-wider text-[var(--text-secondary)]">
-          <Link
-            href="/guia"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
+          <Link href="/guia" className="hover:text-[var(--accent)] transition-colors">
             Manual do Cliente
           </Link>
-          <Link
-            href="/agendar"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
-            Agendar Conversa
+          <Link href="/comecar" className="hover:text-[var(--accent)] transition-colors">
+            Começar Projeto
           </Link>
-          <Link
-            href="/privacidade"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
+          <Link href="/privacidade" className="hover:text-[var(--accent)] transition-colors">
             LGPD & Privacidade
           </Link>
-          <Link
-            href="/admin"
-            className="opacity-40 hover:opacity-100 hover:text-[var(--accent)] transition-opacity"
-          >
+          <Link href="/admin" className="opacity-40 hover:opacity-100 hover:text-[var(--accent)] transition-opacity">
             Admin
           </Link>
         </div>
