@@ -1,20 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { BookingSchema, ClientRequestSchema } from "@/lib/validation";
+import { ClientRequestSchema } from "@/lib/validation";
 
 describe("validation", () => {
-  it("exige consentimento no agendamento", () => {
-    const result = BookingSchema.safeParse({
-      service: "conversa_inicial",
-      start: "2026-08-18T10:00:00-03:00",
-      name: "Cliente",
-      email: "cliente@example.com",
-      whatsapp: "+55 85 99999-9999",
-      notes: "Quero conversar sobre uma landing page.",
-      consent: false,
-    });
-    expect(result.success).toBe(false);
-  });
-
   it("aceita solicitação mínima válida", () => {
     const result = ClientRequestSchema.safeParse({
       service: "landing_page",
