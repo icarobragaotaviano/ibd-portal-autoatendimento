@@ -49,6 +49,26 @@ Para desenvolvimento, os providers podem permanecer em modo `mock`. Em produçã
 
 Não é necessário criar projeto, OAuth ou credenciais no Google Cloud/Google Calendar.
 
+## MVP Comercial — Integração com n8n
+
+O MVP comercial utiliza fluxo seguro com validação server-side antes de encaminhar ao webhook do n8n:
+
+```text
+Browser (Formulário) → POST /api/briefing → n8n na VPS
+```
+
+### Variáveis de ambiente (Server-side)
+
+```env
+N8N_WEBHOOK_URL=https://n8n.seudominio.com/webhook/novo-briefing
+N8N_WEBHOOK_SECRET=uma-chave-secreta
+```
+
+- **Segurança**: A URL e a chave secreta do n8n permanecem exclusivamente no servidor Next.js. O frontend nunca tem acesso ao endpoint direto nem envia requisições cross-origin inseguras.
+- **Proteção anti-spam**: Honeypot silencioso integrado.
+- **Protocolo**: Cada solicitação recebe um identificador único legível (ex: `IBD-2026-A7K4P2`).
+
+
 ## Rotas principais
 
 | Rota | Função |

@@ -17,7 +17,7 @@ export interface DraftStorageEnvelope<T> {
   data: T;
 }
 
-export function useFormDraft<T extends Record<string, any>>({
+export function useFormDraft<T extends Record<string, unknown>>({
   key,
   initialValues,
   version = 1,

@@ -79,7 +79,7 @@ export function LeadFormWizard({
   }
 
   // Update auto-save whenever fields change
-  function updateField(field: string, value: any, setter: (val: any) => void) {
+  function updateField<V>(field: string, value: V, setter: (val: V) => void) {
     setter(value);
     saveDraft({ [field]: value });
   }

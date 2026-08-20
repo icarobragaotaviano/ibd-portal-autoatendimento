@@ -9,10 +9,9 @@ export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/servicos", label: "Serviços" },
-    { href: "/portfolio", label: "Portfólio" },
-    { href: "/como-eu-trabalho", label: "Como eu trabalho" },
-    { href: "/quem-sou", label: "Quem faz o IBD" },
+    { href: "/#servicos", label: "Serviços" },
+    { href: "/#como-funciona", label: "Como funciona" },
+    { href: "/#solicitar", label: "Começar projeto" },
   ];
 
   return (
@@ -32,14 +31,14 @@ export function PublicHeader() {
               Ícaro Braga Designer
             </span>
             <span className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase">
-              Estúdio Criativo
+              Estúdio Solo
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
         <nav
-          className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-display font-bold"
+          className="hidden md:flex items-center gap-1 xl:gap-2 text-sm font-display font-bold"
           aria-label="Navegação Principal"
         >
           {navLinks.map((link) => (
@@ -63,7 +62,7 @@ export function PublicHeader() {
             <span>Área do cliente</span>
           </Link>
 
-          <Link href="/comecar">
+          <Link href="/#solicitar">
             <Button
               variant="primary"
               size="sm"
@@ -112,7 +111,7 @@ export function PublicHeader() {
               <span>Área do cliente (Portal)</span>
             </Link>
 
-            <Link href="/comecar" onClick={() => setMobileMenuOpen(false)} className="w-full">
+            <Link href="/#solicitar" onClick={() => setMobileMenuOpen(false)} className="w-full">
               <Button
                 variant="primary"
                 size="md"
