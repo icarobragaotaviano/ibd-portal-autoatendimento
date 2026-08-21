@@ -17,7 +17,18 @@ export type PublicAnalyticsEvent =
   | "revision_started"
   | "revision_completed"
   | "project_approved"
-  | "login_clicked";
+  | "login_clicked"
+  | "links_viewed"
+  | "links_start_project_clicked"
+  | "links_service_clicked"
+  | "links_case_clicked"
+  | "links_portfolio_clicked"
+  | "links_how_it_works_clicked"
+  | "links_whatsapp_clicked"
+  | "links_social_clicked"
+  | "links_portal_clicked"
+  | "links_share_clicked"
+  | "links_vcf_downloaded";
 
 const SENSITIVE_KEYS = [
   "name",

@@ -82,4 +82,26 @@ describe("Public Data Layer & Business Rules", () => {
       expect(result?.result).toBeDefined();
     });
   });
+
+  describe("IBD Link Hub Data (/links)", () => {
+    it("garante que siteConfig possui dados institucionais e status preenchidos", async () => {
+      const { siteConfig, getWhatsAppLink } = await import("@/data/site");
+      expect(siteConfig.name).toBe("Ícaro Braga");
+      expect(siteConfig.studioName).toContain("IBD");
+      expect(siteConfig.status.available).toBe(true);
+      expect(siteConfig.status.label).toBe("Disponível para novos projetos");
+
+      const waLink = getWhatsAppLink();
+      expect(waLink).toContain("text=");
+      expect(decodeURIComponent(waLink)).toContain("Olá, Ícaro!");
+    });
+
+    it("garante que socialLinks possui os canais oficiais configurados", async () => {
+      const { socialLinks } = await import("@/data/social-links");
+      expect(socialLinks.length).toBeGreaterThanOrEqual(4);
+      expect(socialLinks.some((s) => s.id === "instagram")).toBe(true);
+      expect(socialLinks.some((s) => s.id === "linkedin")).toBe(true);
+      expect(socialLinks.some((s) => s.id === "email")).toBe(true);
+    });
+  });
 });

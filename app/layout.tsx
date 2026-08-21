@@ -42,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="pt-BR"
       className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable}`}
+      suppressHydrationWarning
     >
       <body className="bg-[var(--background)] text-[var(--text-primary)] min-h-screen flex flex-col">
         {children}
